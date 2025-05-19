@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  createdAt    DateTime @default(now())
+  pdfs         Pdf[]    @relation("OwnerPdfs")
+  comments     Comment[]
+  // sharedLinks  SharedLink[]
+}
+
+model Pdf {
+  id          String      @id @default(cuid())
+  title       String
+  fileUrl     String
+  ownerId     String
+  createdAt   DateTime    @default(now())
+  owner       User        @relation("OwnerPdfs", fields: [ownerId], references: [id])
+  comments    Comment[]
+  sharedLinks SharedLink[]
+}
+
+model SharedLink {
+  id        String   @id @default(cuid())
+  pdfId     String
+  token     String   @unique
+  email     String?
+  createdAt DateTime @default(now())
+  pdf       Pdf      @relation(fields: [pdfId], references: [id])
+  comments  Comment[]
+}
+
+model Comment {
+  id           String   @id @default(cuid())
+  content      String
+  authorId     String?
+  sharedLinkId String?
+  pdfId        String
+  createdAt    DateTime @default(now())
+  pdf          Pdf      @relation(fields: [pdfId], references: [id])
+  author       User?    @relation(fields: [authorId], references: [id])
+  sharedLink   SharedLink? @relation(fields: [sharedLinkId], references: [id])
+}
