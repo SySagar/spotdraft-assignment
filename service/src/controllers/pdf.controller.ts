@@ -40,3 +40,35 @@ export const uploadPdf = async (req: Request, res: Response): Promise<void> => {
         res.status(500).json({ error: 'Internal server error during upload' });
     }
 };
+
+export const getPdfs = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const userId = req.user?.userId;
+        if (!userId) {
+            res.status(401).json({ error: 'Unauthorized' });
+            return;
+        }
+
+        const search = (req.query.search as string)?.toLowerCase();
+
+        const pdfs = await prisma.pdf.findMany({
+            where: {
+                ownerId: userId,
+                ...(search && {
+                    title: {
+                        contains: search,
+                        mode: 'insensitive'
+                    }
+                })
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        });
+
+        res.json({ pdfs });
+    } catch (err) {
+        console.error('Failed to fetch PDFs:', err);
+        res.status(500).json({ error: 'Failed to fetch PDFs' });
+    }
+};
