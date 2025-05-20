@@ -2,6 +2,7 @@ import { prisma } from "@config/prismaClient";
 import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import { logger } from "@config/logger";
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'default_secret';
 
@@ -14,7 +15,8 @@ export const signup = async (req: Request, res: Response) => {
             data: { name, email, passwordHash }
         });
         res.status(201).json({ message: 'User created' });
-    } catch {
+    } catch (err) {
+        logger.warn(`Signup failed for ${email}: ${err instanceof Error ? err.message : 'Unknown error'}`);
         res.status(400).json({ error: 'Email already exists or invalid data' });
     }
 };
