@@ -14,47 +14,46 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-
 model User {
-  id           String   @id @default(cuid())
+  id           String    @id @default(cuid())
   name         String
-  email        String   @unique
+  email        String    @unique
   passwordHash String
-  createdAt    DateTime @default(now())
-  pdfs         Pdf[]    @relation("OwnerPdfs")
+  createdAt    DateTime  @default(now())
+  pdfs         Pdf[]     @relation("OwnerPdfs")
   comments     Comment[]
   // sharedLinks  SharedLink[]
 }
 
 model Pdf {
-  id          String      @id @default(cuid())
+  id          String       @id @default(cuid())
   title       String
   fileUrl     String
   ownerId     String
-  createdAt   DateTime    @default(now())
-  owner       User        @relation("OwnerPdfs", fields: [ownerId], references: [id])
+  createdAt   DateTime     @default(now())
+  owner       User         @relation("OwnerPdfs", fields: [ownerId], references: [id])
   comments    Comment[]
   sharedLinks SharedLink[]
 }
 
 model SharedLink {
-  id        String   @id @default(cuid())
+  id        String    @id @default(cuid())
   pdfId     String
-  token     String   @unique
+  token     String    @unique
   email     String?
-  createdAt DateTime @default(now())
-  pdf       Pdf      @relation(fields: [pdfId], references: [id])
+  createdAt DateTime  @default(now())
+  pdf       Pdf       @relation(fields: [pdfId], references: [id])
   comments  Comment[]
 }
 
 model Comment {
-  id           String   @id @default(cuid())
-  content      String
+  id           String      @id @default(cuid())
+  content      Json
   authorId     String?
   sharedLinkId String?
   pdfId        String
-  createdAt    DateTime @default(now())
-  pdf          Pdf      @relation(fields: [pdfId], references: [id])
-  author       User?    @relation(fields: [authorId], references: [id])
+  createdAt    DateTime    @default(now())
+  pdf          Pdf         @relation(fields: [pdfId], references: [id])
+  author       User?       @relation(fields: [authorId], references: [id])
   sharedLink   SharedLink? @relation(fields: [sharedLinkId], references: [id])
 }

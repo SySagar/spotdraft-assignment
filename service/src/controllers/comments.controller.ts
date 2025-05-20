@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { prisma } from '@config/prismaClient';
 import { logger } from '@config/logger';
+import { isEmpty } from 'lodash';
 
 export const addCommentToPdf = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -13,7 +14,7 @@ export const addCommentToPdf = async (req: Request, res: Response): Promise<void
             return;
         }
 
-        if (!content || content.trim() === '') {
+        if (!content || isEmpty(content)) {
             res.status(400).json({ error: 'Content is required' });
             return;
         }
