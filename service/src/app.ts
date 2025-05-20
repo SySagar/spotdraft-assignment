@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import { logger } from '@config/logger';
+
 import authRoutes from '@routes/auth.route';
 import pdfRoutes from '@routes/pdf.route';
 
@@ -27,6 +28,8 @@ app.use('/uploads', express.static('src/uploads'));
 app.use('/test', (_, res) => {
     res.json("Hello from server")
 });
+
+//routes usage
 app.use('/auth', authRoutes);
 app.use('/pdf', pdfRoutes);
 

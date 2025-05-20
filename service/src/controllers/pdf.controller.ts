@@ -1,5 +1,6 @@
 import { Request, Response, type Express } from 'express';
 import { prisma } from '@config/prismaClient';
+import { logger } from '@config/logger';
 
 export const uploadPdf = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -41,7 +42,7 @@ export const uploadPdf = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-export const getPdfs = async (req: Request, res: Response): Promise<void> => {
+export const searchPdf = async (req: Request, res: Response): Promise<void> => {
     try {
         const userId = req.user?.userId;
         if (!userId) {
@@ -70,5 +71,52 @@ export const getPdfs = async (req: Request, res: Response): Promise<void> => {
     } catch (err) {
         console.error('Failed to fetch PDFs:', err);
         res.status(500).json({ error: 'Failed to fetch PDFs' });
+    }
+};
+
+export const getPdfById = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const pdfId = req.params.id;
+        const userId = req.user?.userId;
+
+        const pdf = await prisma.pdf.findUnique({
+            where: { id: pdfId },
+            include: {
+                comments: {
+                    orderBy: { createdAt: 'asc' },
+                    include: {
+                        author: {
+                            select: { id: true, name: true }
+                        }
+                    }
+                }
+            }
+        });
+
+        if (!pdf) {
+            res.status(404).json({ error: 'PDF not found' });
+            return;
+        }
+
+        if (pdf.ownerId !== userId) {
+            res.status(403).json({ error: 'You are not authorized to view this PDF' });
+            return;
+        }
+
+        res.json({
+            id: pdf.id,
+            title: pdf.title,
+            fileUrl: pdf.fileUrl,
+            createdAt: pdf.createdAt,
+            comments: pdf.comments.map((comment) => ({
+                id: comment.id,
+                content: comment.content,
+                createdAt: comment.createdAt,
+                author: comment.author ? { id: comment.author.id, name: comment.author.name } : null
+            }))
+        });
+    } catch (error) {
+        logger.error('Error fetching PDF by ID:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 };
