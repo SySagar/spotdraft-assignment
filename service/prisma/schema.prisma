@@ -15,25 +15,27 @@ datasource db {
 }
 
 model User {
-  id           String    @id @default(cuid())
+  id           String                 @id @default(cuid())
   name         String
-  email        String    @unique
+  email        String                 @unique
   passwordHash String
-  createdAt    DateTime  @default(now())
-  pdfs         Pdf[]     @relation("OwnerPdfs")
+  createdAt    DateTime               @default(now())
+  pdfs         Pdf[]                  @relation("OwnerPdfs")
   comments     Comment[]
   // sharedLinks  SharedLink[]
+  invitedPdfs  PdfGroupAccessInvite[]
 }
 
 model Pdf {
-  id          String       @id @default(cuid())
-  title       String
-  fileUrl     String
-  ownerId     String
-  createdAt   DateTime     @default(now())
-  owner       User         @relation("OwnerPdfs", fields: [ownerId], references: [id])
-  comments    Comment[]
-  sharedLinks SharedLink[]
+  id           String                 @id @default(cuid())
+  title        String
+  fileUrl      String
+  ownerId      String
+  createdAt    DateTime               @default(now())
+  owner        User                   @relation("OwnerPdfs", fields: [ownerId], references: [id])
+  comments     Comment[]
+  sharedLinks  SharedLink[]
+  invitedUsers PdfGroupAccessInvite[]
 }
 
 model SharedLink {
@@ -43,7 +45,6 @@ model SharedLink {
   email     String?
   createdAt DateTime  @default(now())
   pdf       Pdf       @relation(fields: [pdfId], references: [id])
-  comments  Comment[]
 }
 
 model Comment {
@@ -55,5 +56,13 @@ model Comment {
   createdAt    DateTime    @default(now())
   pdf          Pdf         @relation(fields: [pdfId], references: [id])
   author       User?       @relation(fields: [authorId], references: [id])
-  sharedLink   SharedLink? @relation(fields: [sharedLinkId], references: [id])
+}
+
+model PdfGroupAccessInvite {
+  id        String   @id @default(cuid())
+  pdfId     String
+  invitedId String // user who is invited
+  createdAt DateTime @default(now())
+  pdf       Pdf      @relation(fields: [pdfId], references: [id])
+  invited   User     @relation(fields: [invitedId], references: [id])
 }

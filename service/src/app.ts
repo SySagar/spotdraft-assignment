@@ -6,6 +6,7 @@ import { logger } from '@config/logger';
 
 import authRoutes from '@routes/auth.route';
 import pdfRoutes from '@routes/pdf.route';
+import shareRoutes from '@routes/share.route';
 
 dotenv.config();
 const app = express();
@@ -32,5 +33,6 @@ app.use('/test', (_, res) => {
 //routes usage
 app.use('/auth', authRoutes);
 app.use('/pdf', pdfRoutes);
+app.use(shareRoutes);
 
 export default app;

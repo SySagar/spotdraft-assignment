@@ -39,3 +39,44 @@ export const addCommentToPdf = async (req: Request, res: Response): Promise<void
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
+
+export const addPublicComment = async (req: Request, res: Response): Promise<void> => {
+    try {
+        const token = req.params.token;
+        const { content } = req.body;
+        const userId = req.user?.userId;
+
+        if (!userId) {
+            res.status(401).json({ error: 'Login required to comment' });
+            return;
+        }
+
+        if (!content || typeof content !== 'object') {
+            res.status(400).json({ error: 'Invalid comment content' });
+            return;
+        }
+
+        const sharedLink = await prisma.sharedLink.findUnique({
+            where: { token }
+        });
+
+        if (!sharedLink) {
+            res.status(404).json({ error: 'Invalid or expired share link' });
+            return;
+        }
+
+        const comment = await prisma.comment.create({
+            data: {
+                content,
+                pdfId: sharedLink.pdfId,
+                authorId: userId
+            }
+        });
+
+        res.status(201).json({ message: 'Comment posted', comment });
+    } catch (err) {
+        console.error('Public comment error:', err);
+        res.status(500).json({ error: 'Server error while commenting' });
+    }
+};
