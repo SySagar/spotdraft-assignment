@@ -1,4 +1,4 @@
-import { APIInstance } from "@/lib/axios";
+import { APIInstance, AuthorizedAPIInstance } from "@/lib/axios";
 import { type RegisterTypes, type LoginTypes } from "./types";
 
 export const authAPI = {
@@ -11,4 +11,8 @@ export const authAPI = {
         const response = await APIInstance.post("/auth/login", data);
         return response.data;
     },
+
+    verify: async () => {
+        return await AuthorizedAPIInstance.get("/auth/verify");
+    }
 };

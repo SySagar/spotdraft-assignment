@@ -1,15 +1,19 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { useEffect, useState, useCallback } from "react"
+import { Link, useNavigate } from "react-router-dom"
 import { ChevronLeft, ChevronRight, Zap } from "lucide-react"
-
+import { useFormik } from "formik"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Avatar, AvatarImage } from "@/components/ui/avatar"
+import { fieldErrorLabel } from "@/components/ui/fieldErrorLabel"
+import { useLoginMutation } from "@/features/auth/mutations"
+import { loginSchema } from "@/features/auth/schema"
+import { formikFieldError } from "@/lib/utils"
 
 // Carousel slide components
 const CarouselSlide1 = () => (
@@ -113,7 +117,28 @@ export default function Login() {
     const [currentSlide, setCurrentSlide] = useState(0)
     const slides = [<CarouselSlide1 key={0} />, <CarouselSlide2 key={1} />, <CarouselSlide3 key={2} />]
 
-    // Auto-advance carousel every 5 seconds
+    const navigate = useNavigate();
+
+    const handleRedirectToDashboard = useCallback(() => {
+        navigate("/dashboard")
+    }, [navigate])
+
+    const { mutate: loginUser, isPending } = useLoginMutation(handleRedirectToDashboard);
+
+    const loginForm = useFormik({
+        initialValues: {
+            email: '',
+            password: ''
+        },
+        validationSchema: loginSchema,
+        onSubmit: (values) => {
+            loginUser({
+                email: values.email,
+                password: values.password
+            });
+        },
+    });
+
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % slides.length)
@@ -140,7 +165,7 @@ export default function Login() {
 
                     <div className="mb-8">
                         <h1 className="mb-2 text-3xl font-bold">Login</h1>
-                        <p className="text-muted-foreground">Let's upload PDFs!</p>
+                        <p className="text-muted-foreground">Welcome Back!</p>
                     </div>
 
                     <div className="mb-6 flex w-full justify-center items-center">
@@ -161,10 +186,18 @@ export default function Login() {
                         </div>
                     </div>
 
-                    <form className="space-y-6">
+                    <form className="space-y-6" onSubmit={loginForm.handleSubmit}>
                         <div className="space-y-2">
                             <Label htmlFor="email">Email*</Label>
-                            <Input id="email" type="email" placeholder="mail@website.com" />
+                            <Input id="email"
+                                name="email"
+                                type="email"
+                                className={formikFieldError(loginForm.touched.email, loginForm.errors.email)}
+                                placeholder="mail@website.com"
+                                value={loginForm.values.email}
+                                onChange={loginForm.handleChange}
+                                onBlur={loginForm.handleBlur} />
+                            {fieldErrorLabel(loginForm.touched.email, loginForm.errors.email)}
                         </div>
 
                         <div className="space-y-2">
@@ -174,7 +207,15 @@ export default function Login() {
                                     Forgot password?
                                 </Link>
                             </div>
-                            <Input id="password" type="password" />
+                            <Input id="password"
+                                name="password"
+                                type="password"
+                                className={formikFieldError(loginForm.touched.password, loginForm.errors.password)}
+                                value={loginForm.values.password}
+                                onChange={loginForm.handleChange}
+                                onBlur={loginForm.handleBlur}
+                            />
+                            {fieldErrorLabel(loginForm.touched.password, loginForm.errors.password)}
                             <p className="text-xs text-muted-foreground">Min. 8 character</p>
                         </div>
 
@@ -185,8 +226,12 @@ export default function Login() {
                             </Label>
                         </div>
 
-                        <Button type="submit" className="w-full bg-indigo-600 hover:bg-indigo-700" size="lg">
-                            Login
+                        <Button
+                            type="submit"
+                            disabled={isPending}
+                            className="w-full bg-indigo-600 hover:bg-indigo-700"
+                            size="lg">
+                            {isPending ? "Signing in..." : "Login"}
                         </Button>
                     </form>
 
@@ -231,7 +276,6 @@ export default function Login() {
                         <ChevronRight className="h-6 w-6" />
                     </button>
 
-                    {/* Background elements */}
                     <div className="absolute -right-16 -top-16 h-64 w-64 rounded-full bg-indigo-500/30"></div>
                     <div className="absolute -bottom-16 -left-16 h-64 w-64 rounded-full bg-indigo-500/30"></div>
                     <div className="absolute bottom-16 right-16 h-32 w-32 rounded-full bg-indigo-500/30"></div>

@@ -7,3 +7,9 @@ export const registerSchema = Yup.object().shape({
   password: Yup.string().min(8, "Minimum 8 characters").required("Password is required"),
   terms: Yup.boolean().oneOf([true], "You must accept the terms"),
 });
+
+
+export const loginSchema = Yup.object().shape({
+  email: Yup.string().email("Invalid email").required("Email is required"),
+  password: Yup.string().min(8, "Minimum 8 characters").required("Password is required")
+})

@@ -3,6 +3,7 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { logger } from "@config/logger";
+import { tokenVerify } from "@utils/tokenVerify";
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'default_secret';
 
@@ -34,4 +35,9 @@ export const login = async (req: Request, res: Response) => {
     res.status(200).json({ token });
 
 
+};
+
+export const verifySession = (req: Request, res: Response): any => {
+    const userId = (req as any).userId;
+    return res.status(200).json({ success: true, userId });
 };
