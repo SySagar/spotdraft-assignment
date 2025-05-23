@@ -1,7 +1,7 @@
 import { Request, Response, type Express } from 'express';
 import { prisma } from '@config/prismaClient';
 import { logger } from '@config/logger';
-import { generatePresignedUrl } from '@config/s3';
+import { generatePresignedUrl, uploadFileToS3 } from '@utils/s3.services';
 
 
 export const uploadPdf = async (req: Request, res: Response): Promise<void> => {
@@ -23,15 +23,17 @@ export const uploadPdf = async (req: Request, res: Response): Promise<void> => {
 
         const uploadedPdfs = await Promise.all(
             files.map(async (file) => {
-                const pdf = await prisma.pdf.create({
+                const key = `pdfs/${userId}/${Date.now()}_${file.originalname}`;
+
+                await uploadFileToS3(file, key);
+
+                return prisma.pdf.create({
                     data: {
                         title: file.originalname,
-                        fileUrl: `/uploads/${file.filename}`,
+                        fileUrl: key,
                         ownerId: userId,
-                        createdAt: new Date()
-                    }
+                    },
                 });
-                return pdf;
             })
         );
 
