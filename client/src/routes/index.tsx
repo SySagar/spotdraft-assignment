@@ -10,10 +10,10 @@ import ProtectedRoute from '@/common/ProtectedRoute';
 const router = createBrowserRouter([
     {
         path: '/',
-        element: <AppLayout />,
+        element: <ProtectedRoute />,
         children: [
             {
-                element: <ProtectedRoute />, // 🔐 Protected wrapper
+                element: <AppLayout />,
                 children: [{ path: "dashboard", element: <Dashboard /> }],
             },
         ]

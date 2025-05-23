@@ -15,10 +15,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { useUserStore } from "@/store/userStore"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 
 export default function AppLayout() {
   const [open, setOpen] = useState(false)
+  const user = useUserStore((state) => state.user);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -87,7 +89,7 @@ export default function AppLayout() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="gap-2">
                 <User className="h-4 w-4" />
-                Account
+                {user?.name}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">

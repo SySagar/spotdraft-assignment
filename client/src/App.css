@@ -1,0 +1,41 @@
+.pdf-iframe {
+  border: none;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+  background-color: #f8fafc;
+  border-radius: 4px;
+  padding: 0;
+  margin: 0;
+  transition: all 0.3s ease;
+}
+
+/* Target the PDF viewer inside the iframe */
+:global(.pdf-iframe) {
+  --primary-color: #3b82f6;
+  --secondary-color: #eff6ff;
+}
+
+/* Add a subtle inner border when focused */
+.pdf-iframe:focus-within {
+  box-shadow: inset 0 0 0 2px rgba(59, 130, 246, 0.3);
+  outline: none;
+}
+
+/* Custom scrollbar for browsers that support it */
+.pdf-iframe::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.pdf-iframe::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+.pdf-iframe::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+
+.pdf-iframe::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}

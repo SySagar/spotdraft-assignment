@@ -1,11 +1,27 @@
 export type PdfFile = {
     id: number;
-    name: string;
-    uploadDate: string;
-    size: string;
-    type: string;
-    thumbnail: string;
+    title: string;
+    createdAt: string;
+    fileUrl: string;
 };
+
+export type PdfModal = {
+    pdfUrl: string;
+    onClose: () => void
+}
+
+export type UploadPdfResponse = {
+    message: string;
+    uploadedPdfs: {
+        id: string;
+        title: string;
+        fileUrl: string;
+        fileSize: string;
+        fileType: string;
+        createdAt: string;
+    }[];
+};
+
 
 
 export type ViewMode = "list" | "grid";

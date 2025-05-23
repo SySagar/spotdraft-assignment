@@ -37,7 +37,25 @@ export const login = async (req: Request, res: Response) => {
 
 };
 
-export const verifySession = (req: Request, res: Response): any => {
-    const userId = (req as any).userId;
-    return res.status(200).json({ success: true, userId });
+export const verifySession = async (req: Request, res: Response): Promise<any> => {
+    const userId = (req as any).user?.userId;
+
+    logger.warn('userid', userId)
+
+    if (!userId) {
+        res.status(401).json({ success: false, error: "Unauthorized" });
+    }
+
+    const user = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { id: true, name: true, email: true },
+    });
+
+    if (!user) {
+        return res.status(404).json({ success: false, error: "User not found" });
+    }
+
+    logger.info("Verified user:", user);
+
+    res.status(200).json({ success: true, ...user });
 };

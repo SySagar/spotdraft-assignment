@@ -15,8 +15,10 @@ import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
+    SidebarFooter
 } from "@/components/ui/sidebar"
 import { Badge } from "@/components/ui/badge"
+import { useUserStore } from "@/store/userStore"
 
 const navigationItems = [
     {
@@ -42,6 +44,10 @@ const navigationItems = [
 
 
 export function AppSidebar() {
+
+
+    const user = useUserStore((state) => state.user);
+
     return (
         <Sidebar>
             <SidebarHeader className="border-b px-6 py-4">
@@ -74,6 +80,11 @@ export function AppSidebar() {
                     </SidebarGroupContent>
                 </SidebarGroup>
             </SidebarContent>
+            <SidebarFooter>
+                <span className="text-sm text-center mb-4">
+                    {user?.email ?? ''}
+                </span>
+            </SidebarFooter>
         </Sidebar>
     )
 }

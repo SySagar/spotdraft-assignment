@@ -1,14 +1,18 @@
 import { useCallback, useEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { authAPI } from "@/features/auth/api";
+import { useUserStore } from "@/store/userStore";
 
 const ProtectedRoute = () => {
   const [isVerified, setIsVerified] = useState<null | boolean>(null);
+  const setUser = useUserStore((state) => state.setUser);
 
   const verifyToken = useCallback(async () => {
     try {
-      await authAPI.verify();
+      const res = await authAPI.verify();
       setIsVerified(true);
+      if (res)
+        setUser(res?.data)
     } catch {
       setIsVerified(false);
     }
