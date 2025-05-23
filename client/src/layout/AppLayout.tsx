@@ -3,6 +3,8 @@
 import { useState } from "react"
 import { Link, Outlet } from "react-router-dom"
 import { BarChart, FileText, Home, LayoutDashboard, LogOut, Menu, Settings, Upload, User } from "lucide-react"
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
+import { AppSidebar } from "@/components/ui/app-sidebar"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -78,45 +80,9 @@ export default function AppLayout() {
         </Sheet>
         <Link to="/" className="flex items-center gap-2 font-semibold">
           <FileText className="h-6 w-6" />
-          <span>PDF Manager</span>
+          <span>PDF Collab</span>
         </Link>
         <nav className="ml-auto flex items-center gap-4">
-          <div className="hidden md:flex">
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <LayoutDashboard className="h-4 w-4" />
-                  Dashboard
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-48">
-                <DropdownMenuItem asChild>
-                  <Link to="/" className="flex cursor-pointer items-center">
-                    <Home className="mr-2 h-4 w-4" />
-                    Home
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/" className="flex cursor-pointer items-center">
-                    <FileText className="mr-2 h-4 w-4" />
-                    Documents
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/" className="flex cursor-pointer items-center">
-                    <Upload className="mr-2 h-4 w-4" />
-                    Upload
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
-                  <Link to="/" className="flex cursor-pointer items-center">
-                    <BarChart className="mr-2 h-4 w-4" />
-                    Analytics
-                  </Link>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" size="sm" className="gap-2">
@@ -150,9 +116,13 @@ export default function AppLayout() {
           </DropdownMenu>
         </nav>
       </header>
-      <main className="flex-1">
-        <Outlet />
-      </main>
+      <SidebarProvider>
+        <AppSidebar />
+        <main className="flex-1">
+          <SidebarTrigger />
+          <Outlet />
+        </main>
+      </SidebarProvider>
     </div>
   )
 }
