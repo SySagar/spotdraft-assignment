@@ -39,23 +39,23 @@ model Pdf {
 }
 
 model SharedLink {
-  id        String    @id @default(cuid())
+  id        String   @id @default(cuid())
   pdfId     String
-  token     String    @unique
+  token     String   @unique
   email     String?
-  createdAt DateTime  @default(now())
-  pdf       Pdf       @relation(fields: [pdfId], references: [id])
+  createdAt DateTime @default(now())
+  pdf       Pdf      @relation(fields: [pdfId], references: [id])
 }
 
 model Comment {
-  id           String      @id @default(cuid())
+  id           String   @id @default(cuid())
   content      Json
   authorId     String?
   sharedLinkId String?
   pdfId        String
-  createdAt    DateTime    @default(now())
-  pdf          Pdf         @relation(fields: [pdfId], references: [id])
-  author       User?       @relation(fields: [authorId], references: [id])
+  createdAt    DateTime @default(now())
+  pdf          Pdf      @relation(fields: [pdfId], references: [id])
+  author       User?    @relation(fields: [authorId], references: [id])
 }
 
 model PdfGroupAccessInvite {

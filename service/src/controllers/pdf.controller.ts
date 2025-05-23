@@ -1,6 +1,8 @@
 import { Request, Response, type Express } from 'express';
 import { prisma } from '@config/prismaClient';
 import { logger } from '@config/logger';
+import { generatePresignedUrl } from '@config/s3';
+
 
 export const uploadPdf = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -25,7 +27,8 @@ export const uploadPdf = async (req: Request, res: Response): Promise<void> => {
                     data: {
                         title: file.originalname,
                         fileUrl: `/uploads/${file.filename}`,
-                        ownerId: userId
+                        ownerId: userId,
+                        createdAt: new Date()
                     }
                 });
                 return pdf;
@@ -118,5 +121,50 @@ export const getPdfById = async (req: Request, res: Response): Promise<void> => 
     } catch (error) {
         logger.error('Error fetching PDF by ID:', error);
         res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+export const getAllPdfs = async (req: Request, res: Response): Promise<void> => {
+    logger.info('thunder')
+    try {
+        const userId = req.user?.userId;
+
+        if (!userId) {
+            res.status(401).json({ error: 'Unauthorized' });
+            return;
+        }
+
+        const pdfs = await prisma.pdf.findMany({
+            orderBy: { createdAt: 'desc' }
+        });
+
+
+        res.status(200).json({ pdfs });
+    } catch (error) {
+        logger.error('Error fetching all PDFs:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+
+export const getPresignedPdfUrl = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.body;
+
+        if (!id) {
+            res.status(400).json({ error: "Missing PDF ID" });
+        }
+
+        const pdf = await prisma.pdf.findUnique({ where: { id } });
+        if (!pdf) {
+            res.status(404).json({ error: "PDF not found" });
+            return;
+        }
+
+        const url = await generatePresignedUrl(pdf.fileUrl);
+        res.status(200).json({ url });
+    } catch (err) {
+        console.error("Presigned URL error:", err);
+        res.status(500).json({ error: "Internal error generating URL" });
     }
 };

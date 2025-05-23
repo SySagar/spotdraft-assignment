@@ -13,6 +13,9 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.816.0",
+    "@aws-sdk/s3-request-presigner": "^3.816.0",
+    "@aws-sdk/types": "^3.804.0",
     "@prisma/client": "^6.8.2",
     "@types/bcrypt": "^5.0.2",
     "@types/cors": "^2.8.18",
@@ -20,6 +23,7 @@
     "@types/lodash": "^4.17.17",
     "@types/morgan": "^1.9.9",
     "@types/multer": "^1.4.12",
+    "aws-sdk": "^2.1692.0",
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.5.0",
