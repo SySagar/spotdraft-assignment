@@ -23,6 +23,7 @@ model User {
   pdfs         Pdf[]     @relation("OwnerPdfs")
   comments     Comment[]
   invitedPdfs  Pdf[]     @relation("InvitedUsers")
+  Pdf          Pdf[]
 }
 
 model Pdf {
@@ -31,10 +32,12 @@ model Pdf {
   fileUrl      String
   ownerId      String
   createdAt    DateTime     @default(now())
-  owner        User         @relation("OwnerPdfs", fields: [ownerId], references: [id])
+  owner        User         @relation("OwnerPdfs", fields: [ownerId], references: [id], onDelete: Cascade)
   comments     Comment[]
   sharedLinks  SharedLink[]
   invitedUsers User[]       @relation("InvitedUsers")
+  User         User?        @relation(fields: [userId], references: [id])
+  userId       String?
 }
 
 model SharedLink {
@@ -43,7 +46,7 @@ model SharedLink {
   token     String   @unique
   email     String?
   createdAt DateTime @default(now())
-  pdf       Pdf      @relation(fields: [pdfId], references: [id])
+  pdf       Pdf      @relation(fields: [pdfId], references: [id], onDelete: Cascade)
 }
 
 model Comment {
@@ -53,6 +56,6 @@ model Comment {
   sharedLinkId String?
   pdfId        String
   createdAt    DateTime @default(now())
-  pdf          Pdf      @relation(fields: [pdfId], references: [id])
-  author       User?    @relation(fields: [authorId], references: [id])
+  pdf          Pdf      @relation(fields: [pdfId], references: [id], onDelete: Cascade)
+  author       User?    @relation(fields: [authorId], references: [id], onDelete: Cascade)
 }
