@@ -22,6 +22,8 @@ const ProtectedRoute = () => {
   useEffect(() => {
     const token = localStorage.getItem("accessToken");
 
+    console.log('token')
+
     if (!token) {
       setIsVerified(false);
       return;

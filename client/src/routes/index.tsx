@@ -2,7 +2,8 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import AppLayout from '@/layout/AppLayout';
 import Login from '@/pages/auth/Login';
 import Signup from '@/pages/auth/Signup';
-import Dashboard from '@/pages/dashboard'
+import Dashboard from '@/pages/dashboard';
+import UsersPage from '@/pages/users';
 import NotFound from '@/pages/NotFound';
 import Unauthorized from '@/pages/Unathorized';
 import ProtectedRoute from '@/common/ProtectedRoute';
@@ -16,6 +17,11 @@ const router = createBrowserRouter([
                 element: <AppLayout />,
                 children: [{ path: "dashboard", element: <Dashboard /> }],
             },
+            {
+                element: <AppLayout />,
+                children: [{ path: "users", element: <UsersPage /> }],
+            }
+
         ]
     },
     { path: '/login', element: <Login /> },
