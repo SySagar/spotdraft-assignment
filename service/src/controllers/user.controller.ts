@@ -20,3 +20,10 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
         res.status(500).json({ error: "Failed to fetch users" });
     }
 };
+
+export const getSidebarCounts = async (req: Request, res: Response) => {
+    const userCount = await prisma.user.count();
+    // const groupCount = await prisma.group.count();
+
+    res.json({ userCount });
+};

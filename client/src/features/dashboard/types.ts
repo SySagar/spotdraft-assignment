@@ -3,6 +3,7 @@ export type PdfFile = {
     title: string;
     createdAt: string;
     fileUrl: string;
+    ownerId: string;
 };
 
 export type PdfModal = {

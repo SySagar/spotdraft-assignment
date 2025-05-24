@@ -18,4 +18,9 @@ export const pdfAPI = {
         const res = await AuthorizedAPIInstance.post("/pdf/presignedUrl", { id });
         return res.data;
     },
+
+    getSidebarCounts: async () => {
+        const res = await AuthorizedAPIInstance.get("/sidebar-counts");
+        return res.data;
+    },
 };

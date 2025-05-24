@@ -1,42 +1,30 @@
 import { Request, Response } from 'express';
 import { prisma } from '@config/prismaClient';
-import { logger } from '@config/logger';
 import { isEmpty } from 'lodash';
 
-export const addCommentToPdf = async (req: Request, res: Response): Promise<void> => {
+export const addCommentToPdf = async (req: Request, res: Response) => {
     try {
-        const userId = req.user?.userId;
-        const pdfId = req.params.id;
+        const { id } = req.params;
+        const userId = (req as any).user?.userId;
         const { content } = req.body;
 
-        if (!userId) {
-            res.status(401).json({ error: 'Unauthorized' });
-            return;
-        }
-
-        if (!content || isEmpty(content)) {
-            res.status(400).json({ error: 'Content is required' });
-            return;
-        }
-
-        const pdf = await prisma.pdf.findUnique({ where: { id: pdfId } });
-        if (!pdf) {
-            res.status(404).json({ error: 'PDF not found' });
-            return;
-        }
+        if (isEmpty(content))
+            res.status(400).json({ "error": 'No content exists' })
 
         const comment = await prisma.comment.create({
             data: {
+                pdfId: id,
+                authorId: userId,
                 content,
-                pdfId,
-                authorId: userId
-            }
+            },
+            include: {
+                author: { select: { name: true, email: true } },
+            },
         });
 
-        res.status(201).json({ message: 'Comment added', comment });
-    } catch (err) {
-        logger.error('Failed to add comment:', err);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(201).json({ comment });
+    } catch {
+        res.status(500).json({ error: "Failed to add comment" });
     }
 };
 
@@ -78,5 +66,26 @@ export const addPublicComment = async (req: Request, res: Response): Promise<voi
     } catch (err) {
         console.error('Public comment error:', err);
         res.status(500).json({ error: 'Server error while commenting' });
+    }
+};
+
+export const getComments = async (req: Request, res: Response) => {
+    try {
+        const { id } = req.params;
+
+        if (isEmpty(id))
+            res.status(400).json({ error: "PDF id doesn't exists" })
+
+        const comments = await prisma.comment.findMany({
+            where: { pdfId: id },
+            orderBy: { createdAt: "desc" },
+            include: {
+                author: { select: { name: true, email: true } },
+            },
+        });
+
+        res.status(200).json({ comments });
+    } catch {
+        res.status(500).json({ error: "Failed to load comments" });
     }
 };

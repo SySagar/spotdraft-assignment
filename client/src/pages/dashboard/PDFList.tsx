@@ -4,7 +4,6 @@ import {
     Grid3X3,
     List,
     MoreHorizontal,
-    Plus,
     Search,
     Upload,
     Eye,
@@ -23,7 +22,9 @@ import { formatDate } from "@/lib/utils"
 import PdfModal from "./PdfViewer"
 // import PdfIframe from "./PdfViewer.v2"
 import { type PdfFile, type ViewMode } from '@/features/dashboard/types'
+
 import { useUploadPdfMutation } from "@/features/dashboard/mutations";
+import { useDebounce } from "@/hooks/useDebounce"
 
 
 function PDFListView({ files, handleSelectPdf }: { files: PdfFile[], handleSelectPdf: any }) {
@@ -140,14 +141,11 @@ export default function Dashboard() {
     const [modalOpen, setModalOpen] = useState(false);
     const [uploadModalOpen, setUploadModalOpen] = useState(false);
     const [selectedPdfId, setSelectedPdfId] = useState<string | null>(null)
-
-    console.log(modalOpen)
+    const debouncedSearch = useDebounce(searchQuery, 300);
 
     const { data: presignedUrlData, isSuccess } = usePresignedPdfUrl(selectedPdfId as string, modalOpen);
     const { data: allPdfData, isLoading, isError } = usePdfListQuery();
     const { isPending } = useUploadPdfMutation();
-
-    console.log(presignedUrlData)
 
     // const handleUploadClick = useCallback(() => {
     //     const input = document.createElement("input");
@@ -188,6 +186,21 @@ export default function Dashboard() {
         setUploadModalOpen(true)
     }, [setUploadModalOpen])
 
+    const handleSearchPdf = useCallback((e: any) => {
+        setSearchQuery(e.target.value)
+    }, [setSearchQuery])
+
+    const filteredPdfs = useMemo(() => {
+        if (debouncedSearch !== "")
+            return allPdfData?.pdfs?.filter((pdf: any) =>
+                pdf.title.toLowerCase().includes(debouncedSearch.toLowerCase())
+            ) ?? [];
+
+        return allPdfData?.pdfs ?? [];
+    }, [debouncedSearch, allPdfData]);
+
+
+
     const buttonState = useMemo(() => {
         return isPending ? "Uploading..." : "Upload PDF";
     }, [isPending])
@@ -222,7 +235,7 @@ export default function Dashboard() {
                             <Input
                                 placeholder="Search PDFs..."
                                 value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
+                                onChange={handleSearchPdf}
                                 className="pl-9"
                             />
                         </div>
@@ -246,19 +259,19 @@ export default function Dashboard() {
                         </div>
                     </div>
 
-                    {allPdfData.pdfs.length === 0 ? (
+                    {filteredPdfs.length === 0 ? (
                         <div className="flex h-32 items-center justify-center text-muted-foreground">
                             No PDFs found matching your search.
                         </div>
                     ) : viewMode === "list" ? (
-                        <PDFListView files={allPdfData.pdfs} handleSelectPdf={handleSelectPdf} />
+                        <PDFListView files={filteredPdfs} handleSelectPdf={handleSelectPdf} />
                     ) : (
-                        <PDFGridView files={allPdfData.pdfs} handleSelectPdf={handleSelectPdf} />
+                        <PDFGridView files={filteredPdfs} handleSelectPdf={handleSelectPdf} />
                     )}
                 </div>
 
                 {selectedPdfId && isSuccess && (
-                    <PdfModal pdfUrl={presignedUrlData.url} onClose={handleClose} />
+                    <PdfModal pdfUrl={presignedUrlData.url} onClose={handleClose} selectedPdfId={selectedPdfId} modalOpen={modalOpen} />
                     // <PdfIframe pdfUrl={presignedUrlData.url} onClose={handleClose} />
                 )}
                 <UploadModal open={uploadModalOpen} onClose={() => setUploadModalOpen(false)} />

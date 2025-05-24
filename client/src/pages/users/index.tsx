@@ -10,8 +10,6 @@ import {
     Search,
     Mail,
     MoreVertical,
-    UserPlus,
-    Filter
 } from "lucide-react";
 import {
     DropdownMenu,

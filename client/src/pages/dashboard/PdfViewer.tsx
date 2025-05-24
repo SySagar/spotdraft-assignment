@@ -1,16 +1,19 @@
 import { useEffect, useState, useRef } from "react"
-import { EditorContent, useEditor } from "@tiptap/react"
-import StarterKit from "@tiptap/starter-kit"
-
+import CommentInputPanel from "./components/Comment"
 const pdfjsLibUrl = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"
 const pdfjsWorkerUrl = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"
+import { useComments } from "@/features/comments/query";
+import { useAddCommentMutation } from "@/features/comments/mutation";
+
 
 type Props = {
   pdfUrl: string
   onClose: () => void
+  selectedPdfId: string,
+  modalOpen: boolean
 }
 
-export default function PdfModal({ pdfUrl, onClose }: Props) {
+export default function PdfModal({ pdfUrl, onClose, selectedPdfId, modalOpen }: Props) {
   const [numPages, setNumPages] = useState<number | null>(null)
   const [pageNumber, setPageNumber] = useState(1)
   const [currentPage, setCurrentPage] = useState<any>(null)
@@ -19,14 +22,13 @@ export default function PdfModal({ pdfUrl, onClose }: Props) {
   const [baseScale, setBaseScale] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
 
-  const editor = useEditor({
-    extensions: [StarterKit],
-    content: "",
-  })
 
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const pdfContainerRef = useRef<HTMLDivElement>(null)
+
+  const { data: comments, isLoading: loadingComments } = useComments(selectedPdfId, modalOpen);
+  const { mutate: addComment } = useAddCommentMutation(selectedPdfId);
 
   const renderPage = (page: any) => {
     if (!canvasRef.current || !containerRef.current) return
@@ -147,6 +149,11 @@ export default function PdfModal({ pdfUrl, onClose }: Props) {
     setZoomLevel(1)
   }
 
+  const handleCommentSubmit = (html: string) => {
+    addComment({ content: html });
+  };
+
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={onClose}>
       <div
@@ -265,33 +272,30 @@ export default function PdfModal({ pdfUrl, onClose }: Props) {
         {/* Right: Comment Editor */}
         <div className="w-1/3 p-6 flex flex-col bg-white">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900">Leave a comment</h2>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
+            <h2 className="text-xl font-semibold text-gray-900">Comments</h2>
+            <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+              ✖
             </button>
           </div>
 
-          <div className="flex-1 border border-gray-200 rounded-lg p-3 mb-4 overflow-auto bg-gray-50 focus-within:bg-white focus-within:border-blue-300 transition-colors">
-            <EditorContent editor={editor} className="prose prose-sm max-w-none focus:outline-none" />
+          <div className="flex-1 space-y-3 overflow-auto pr-2 mb-4">
+            {loadingComments ? (
+              <p>Loading...</p>
+            ) : comments?.length === 0 ? (
+              <p className="text-sm text-muted-foreground">No comments yet.</p>
+            ) : (
+              comments.map((comment: any) => (
+                <div key={comment.id} className="text-sm p-2 rounded-md border">
+                  <div className="text-xs font-semibold">{comment.author.name}</div>
+                  <div className="text-xs text-muted-foreground mb-1">{new Date(comment.createdAt).toLocaleString()}</div>
+                  <div className="prose prose-sm" dangerouslySetInnerHTML={{ __html: comment.content }} />
+                </div>
+              ))
+            )}
           </div>
 
-          <div className="flex gap-3">
-            <button
-              onClick={() => {
-                console.log("Comment saved:", editor?.getHTML())
-              }}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md transition-colors font-medium"
-            >
-              Save Comment
-            </button>
-            <button
-              onClick={onClose}
-              className="px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-md transition-colors"
-            >
-              Cancel
-            </button>
+          <div className="border-t pt-4">
+            <CommentInputPanel onSubmit={handleCommentSubmit} />
           </div>
         </div>
       </div>

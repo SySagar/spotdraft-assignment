@@ -13,3 +13,11 @@ export const usePdfListQuery = () =>
         queryKey: ["pdfs"],
         queryFn: pdfAPI.getAllPdfs,
     });
+
+export const useSidebarCounts = () => {
+    return useQuery({
+        queryKey: ["sidebar-counts"],
+        queryFn: pdfAPI.getSidebarCounts,
+        refetchInterval: 10000,
+    });
+};
