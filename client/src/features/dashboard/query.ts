@@ -21,3 +21,10 @@ export const useSidebarCounts = () => {
         refetchInterval: 10000,
     });
 };
+
+export const useSharedPdfQuery = (token: string, userId: string | undefined) => {
+    return useQuery({
+        queryKey: ["shared-pdf", token, userId],
+        queryFn: () => pdfAPI.getSharedPdf(token, userId)
+    });
+};

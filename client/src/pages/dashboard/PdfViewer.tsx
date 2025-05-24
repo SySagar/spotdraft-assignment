@@ -4,16 +4,17 @@ const pdfjsLibUrl = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.
 const pdfjsWorkerUrl = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js"
 import { useComments } from "@/features/comments/query";
 import { useAddCommentMutation } from "@/features/comments/mutation";
-
+import InviteUserPanel from "./components/InviteUserPanel";
 
 type Props = {
   pdfUrl: string
   onClose: () => void
   selectedPdfId: string,
   modalOpen: boolean
+  allowCommenting?: boolean;
 }
 
-export default function PdfModal({ pdfUrl, onClose, selectedPdfId, modalOpen }: Props) {
+export default function PdfModal({ pdfUrl, onClose, selectedPdfId, modalOpen, allowCommenting = true }: Props) {
   const [numPages, setNumPages] = useState<number | null>(null)
   const [pageNumber, setPageNumber] = useState(1)
   const [currentPage, setCurrentPage] = useState<any>(null)
@@ -153,7 +154,6 @@ export default function PdfModal({ pdfUrl, onClose, selectedPdfId, modalOpen }: 
     addComment({ content: html });
   };
 
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={onClose}>
       <div
@@ -273,9 +273,12 @@ export default function PdfModal({ pdfUrl, onClose, selectedPdfId, modalOpen }: 
         <div className="w-1/3 p-6 flex flex-col bg-white">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-gray-900">Comments</h2>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-              ✖
-            </button>
+            <div className="flex justify-content items-center">
+              <InviteUserPanel pdfId={selectedPdfId} />
+              <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
+                ✖
+              </button>
+            </div>
           </div>
 
           <div className="flex-1 space-y-3 overflow-auto pr-2 mb-4">
@@ -294,9 +297,12 @@ export default function PdfModal({ pdfUrl, onClose, selectedPdfId, modalOpen }: 
             )}
           </div>
 
-          <div className="border-t pt-4">
-            <CommentInputPanel onSubmit={handleCommentSubmit} />
-          </div>
+          {
+            allowCommenting &&
+            <div className="border-t pt-4">
+              <CommentInputPanel onSubmit={handleCommentSubmit} />
+            </div>
+          }
         </div>
       </div>
     </div>

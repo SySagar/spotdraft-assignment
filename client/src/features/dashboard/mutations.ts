@@ -11,3 +11,13 @@ export const useUploadPdfMutation = () => {
         },
     });
 };
+
+export const useInviteUserMutation = (pdfId: string, onSuccessCallback: (data: any) => void) => {
+    return useMutation({
+        mutationFn: (email: string) => pdfAPI.inviteUserToPdf(pdfId, email),
+        onSuccess: (data) => {
+            console.log("Invite response:", data);
+            onSuccessCallback?.(data);
+        },
+    });
+};

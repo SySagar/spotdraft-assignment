@@ -1,11 +1,14 @@
 import { Request, Response } from 'express';
 import { prisma } from '@config/prismaClient';
 import crypto from 'crypto';
+import { generatePresignedUrl } from '@utils/s3.services';
 
+//single useer invite
 export const sharePdf = async (req: Request, res: Response): Promise<void> => {
     try {
         const userId = req.user?.userId;
         const pdfId = req.params.id;
+        const email = req.body.email;
 
         if (!userId) {
             res.status(401).json({ error: 'Unauthorized' });
@@ -13,7 +16,8 @@ export const sharePdf = async (req: Request, res: Response): Promise<void> => {
         }
 
         const pdf = await prisma.pdf.findUnique({
-            where: { id: pdfId }
+            where: { id: pdfId },
+            include: { invitedUsers: true }
         });
 
         if (!pdf) {
@@ -31,7 +35,7 @@ export const sharePdf = async (req: Request, res: Response): Promise<void> => {
         });
 
         if (existing) {
-            const shareUrl = `${process.env.BASE_URL ?? 'http://localhost:5000'}/share/${existing.token}`;
+            const shareUrl = `${process.env.BASE_URL ?? 'http://localhost:5173'}/share/${existing.token}`;
             res.status(200).json({
                 message: 'PDF already shared',
                 shareUrl,
@@ -45,14 +49,33 @@ export const sharePdf = async (req: Request, res: Response): Promise<void> => {
         const sharedLink = await prisma.sharedLink.create({
             data: {
                 pdfId,
-                token
+                token,
+                email
             }
         });
 
-        const shareUrl = `${process.env.BASE_URL ?? 'http://localhost:5000'}/share/${token}`;
+        const shareUrl = `${process.env.BASE_URL ?? 'http://localhost:5173'}/share/${token}`;
+
+        const invitedUser = await prisma.user.findUnique({
+            where: { email }
+        });
+
+        if (invitedUser) {
+            const alreadyInvited = pdf.invitedUsers.some(user => user.id === invitedUser.id);
+            if (!alreadyInvited) {
+                await prisma.pdf.update({
+                    where: { id: pdfId },
+                    data: {
+                        invitedUsers: {
+                            connect: { id: invitedUser.id }
+                        }
+                    }
+                });
+            }
+        }
 
         res.status(201).json({
-            message: 'PDF shared publicly',
+            message: 'User invited to this PDF',
             shareUrl,
             token
         });
@@ -62,84 +85,91 @@ export const sharePdf = async (req: Request, res: Response): Promise<void> => {
     }
 };
 
-export const inviteUserToPdf = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const userId = req.user?.userId;
-        const pdfId = req.params.id;
-        const { email } = req.body;
+//ggroup invite
+// export const inviteUserToPdf = async (req: Request, res: Response): Promise<void> => {
+//     try {
+//         const userId = req.user?.userId;
+//         const pdfId = req.params.id;
+//         const { email } = req.body;
 
-        if (!userId) {
-            res.status(401).json({ error: 'Unauthorized' });
-            return;
-        }
+//         if (!userId) {
+//             res.status(401).json({ error: 'Unauthorized' });
+//             return;
+//         }
 
-        if (!email) {
-            res.status(400).json({ error: 'Email is required' });
-            return;
-        }
+//         if (!email) {
+//             res.status(400).json({ error: 'Email is required' });
+//             return;
+//         }
 
-        const pdf = await prisma.pdf.findUnique({ where: { id: pdfId } });
-        if (!pdf) {
-            res.status(404).json({ error: 'PDF not found' });
-            return;
-        }
+//         const pdf = await prisma.pdf.findUnique({ where: { id: pdfId } });
+//         if (!pdf) {
+//             res.status(404).json({ error: 'PDF not found' });
+//             return;
+//         }
 
-        if (pdf.ownerId !== userId) {
-            res.status(403).json({ error: 'Only the owner can invite users' });
-            return;
-        }
+//         if (pdf.ownerId !== userId) {
+//             res.status(403).json({ error: 'Only the owner can invite users' });
+//             return;
+//         }
 
-        const invitedUser = await prisma.user.findUnique({ where: { email } });
-        if (!invitedUser) {
-            res.status(404).json({ error: 'User with this email is not registered' });
-            return;
-        }
+//         const invitedUser = await prisma.user.findUnique({ where: { email } });
+//         if (!invitedUser) {
+//             res.status(404).json({ error: 'User with this email is not registered' });
+//             return;
+//         }
 
-        const existingInvite = await prisma.pdfGroupAccessInvite.findFirst({
-            where: {
-                pdfId,
-                invitedId: invitedUser.id
-            }
-        });
+//         const existingInvite = await prisma.pdfGroupAccessInvite.findFirst({
+//             where: {
+//                 pdfId,
+//                 invitedId: invitedUser.id
+//             }
+//         });
 
-        if (existingInvite) {
-            res.status(409).json({ error: 'User is already invited to this PDF' });
-            return;
-        }
+//         if (existingInvite) {
+//             res.status(409).json({ error: 'User is already invited to this PDF' });
+//             return;
+//         }
 
-        const invite = await prisma.pdfGroupAccessInvite.create({
-            data: {
-                pdfId,
-                invitedId: invitedUser.id
-            }
-        });
+//         const invite = await prisma.pdfGroupAccessInvite.create({
+//             data: {
+//                 pdfId,
+//                 invitedId: invitedUser.id
+//             }
+//         });
 
-        res.status(201).json({
-            message: 'User invited successfully',
-            invitedUser: {
-                id: invitedUser.id,
-                name: invitedUser.name,
-                email: invitedUser.email
-            },
-            inviteId: invite.id
-        });
-    } catch (err) {
-        console.error('Invite error:', err);
-        res.status(500).json({ error: 'Internal server error' });
-    }
-};
+//         res.status(201).json({
+//             message: 'User invited successfully',
+//             invitedUser: {
+//                 id: invitedUser.id,
+//                 name: invitedUser.name,
+//                 email: invitedUser.email
+//             },
+//             inviteId: invite.id
+//         });
+//     } catch (err) {
+//         console.error('Invite error:', err);
+//         res.status(500).json({ error: 'Internal server error' });
+//     }
+// };
 
 export const getSharedPdfByToken = async (req: Request, res: Response): Promise<void> => {
     try {
         const token = req.params.token;
+        const userId = (req as any).query?.userId;
 
-        // Find the shared link and get its PDF
+
         const sharedLink = await prisma.sharedLink.findUnique({
             where: { token },
             include: {
-                pdf: true
+                pdf: {
+                    include: {
+                        invitedUsers: true
+                    }
+                }
             }
         });
+
 
         if (!sharedLink) {
             res.status(404).json({ error: 'Invalid or expired share link' });
@@ -148,7 +178,6 @@ export const getSharedPdfByToken = async (req: Request, res: Response): Promise<
 
         const pdf = sharedLink.pdf;
 
-        // Fetch all comments for that PDF (authored only)
         const comments = await prisma.comment.findMany({
             where: { pdfId: pdf.id },
             orderBy: { createdAt: 'asc' },
@@ -158,13 +187,17 @@ export const getSharedPdfByToken = async (req: Request, res: Response): Promise<
                 }
             }
         });
+        const allowCommenting = userId && (pdf.ownerId === userId || pdf.invitedUsers.some(invite => invite.id === userId));
+        console.log('userid', userId, pdf.ownerId, allowCommenting)
+        const url = await generatePresignedUrl(pdf.fileUrl);
 
         res.status(200).json({
             id: pdf.id,
             title: pdf.title,
-            fileUrl: pdf.fileUrl,
+            fileUrl: url,
             createdAt: pdf.createdAt,
             shared: true,
+            allowCommenting: allowCommenting ?? false,
             comments: comments.map((comment) => ({
                 id: comment.id,
                 content: comment.content,
@@ -182,58 +215,58 @@ export const getSharedPdfByToken = async (req: Request, res: Response): Promise<
 };
 
 
-export const getPdfById = async (req: Request, res: Response): Promise<void> => {
-    try {
-        const userId = req.user?.userId;
-        const pdfId = req.params.id;
+// export const getPdfById = async (req: Request, res: Response): Promise<void> => {
+//     try {
+//         const userId = req.user?.userId;
+//         const pdfId = req.params.id;
 
-        const pdf = await prisma.pdf.findUnique({
-            where: { id: pdfId },
-            include: {
-                comments: {
-                    orderBy: { createdAt: 'asc' },
-                    include: {
-                        author: {
-                            select: { id: true, name: true }
-                        }
-                    }
-                }
-            }
-        });
+//         const pdf = await prisma.pdf.findUnique({
+//             where: { id: pdfId },
+//             include: {
+//                 comments: {
+//                     orderBy: { createdAt: 'asc' },
+//                     include: {
+//                         author: {
+//                             select: { id: true, name: true }
+//                         }
+//                     }
+//                 }
+//             }
+//         });
 
-        if (!pdf) {
-            res.status(404).json({ error: 'PDF not found' });
-            return;
-        }
+//         if (!pdf) {
+//             res.status(404).json({ error: 'PDF not found' });
+//             return;
+//         }
 
-        const isOwner = pdf.ownerId === userId;
+//         const isOwner = pdf.ownerId === userId;
 
-        const isInvited = await prisma.pdfGroupAccessInvite.findFirst({
-            where: {
-                pdfId,
-                invitedId: userId
-            }
-        });
+//         const isInvited = await prisma.pdfGroupAccessInvite.findFirst({
+//             where: {
+//                 pdfId,
+//                 invitedId: userId
+//             }
+//         });
 
-        if (!isOwner && !isInvited) {
-            res.status(403).json({ error: 'Access denied' });
-            return;
-        }
+//         if (!isOwner && !isInvited) {
+//             res.status(403).json({ error: 'Access denied' });
+//             return;
+//         }
 
-        res.status(200).json({
-            id: pdf.id,
-            title: pdf.title,
-            fileUrl: pdf.fileUrl,
-            createdAt: pdf.createdAt,
-            comments: pdf.comments.map((c) => ({
-                id: c.id,
-                content: c.content,
-                createdAt: c.createdAt,
-                author: c.author ? { id: c.author.id, name: c.author.name } : null
-            }))
-        });
-    } catch (err) {
-        console.error('Group access error:', err);
-        res.status(500).json({ error: 'Server error while fetching PDF' });
-    }
-};
+//         res.status(200).json({
+//             id: pdf.id,
+//             title: pdf.title,
+//             fileUrl: pdf.fileUrl,
+//             createdAt: pdf.createdAt,
+//             comments: pdf.comments.map((c) => ({
+//                 id: c.id,
+//                 content: c.content,
+//                 createdAt: c.createdAt,
+//                 author: c.author ? { id: c.author.id, name: c.author.name } : null
+//             }))
+//         });
+//     } catch (err) {
+//         console.error('Group access error:', err);
+//         res.status(500).json({ error: 'Server error while fetching PDF' });
+//     }
+// };

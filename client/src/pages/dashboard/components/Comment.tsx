@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 
 type Props = {
     onSubmit: (html: string) => void;
+    allowCommenting?: boolean
 };
 
 export default function CommentInputPanel({ onSubmit }: Props) {

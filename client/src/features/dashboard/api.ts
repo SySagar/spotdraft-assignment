@@ -1,4 +1,4 @@
-import { AuthorizedAPIInstance } from "@/lib/axios";
+import { AuthorizedAPIInstance, APIInstance } from "@/lib/axios";
 import { type UploadPdfResponse } from "./types";
 
 export const pdfAPI = {
@@ -23,4 +23,13 @@ export const pdfAPI = {
         const res = await AuthorizedAPIInstance.get("/sidebar-counts");
         return res.data;
     },
+
+    inviteUserToPdf: (pdfId: string, email: string) => {
+        return AuthorizedAPIInstance.post(`/pdf/${pdfId}/share`, { email });
+    },
+
+    getSharedPdf: async (token: string, userId: string | undefined) => {
+        return APIInstance.get(`/share/${token}?userId=${userId}`).then((res) => res.data);
+    }
+
 };

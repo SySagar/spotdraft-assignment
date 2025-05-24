@@ -40,12 +40,6 @@ export function AppSidebar() {
             icon: Users,
             badge: isLoading ? 0 : data?.userCount?.toString(),
         },
-        {
-            title: "Groups",
-            url: "/groups",
-            icon: UsersRound,
-            badge: isLoading ? 0 : data?.groupCount?.toString(),
-        },
     ], [data])
 
 

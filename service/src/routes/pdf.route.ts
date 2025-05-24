@@ -7,11 +7,11 @@ import { addCommentToPdf, getComments } from '@controllers/comments.controller';
 const router = express.Router();
 
 router.get('/getAllPDFs', authenticate, getAllPdfs);
-router.post('/upload', authenticate, multerClient.array('files', 5), uploadPdf);
+router.post('/upload', authenticate, multerClient.array('pdfs', 5), uploadPdf);
 router.get('/searchPdf', authenticate, searchPdf);
 router.get('/:id', authenticate, getPdfById);
 router.post('/comment/:id', authenticate, addCommentToPdf);
-router.get('/comment/:id', authenticate, getComments);
+router.get('/comment/:id', getComments);
 router.post('/presignedUrl', authenticate, getPresignedPdfUrl);
 
 export default router;

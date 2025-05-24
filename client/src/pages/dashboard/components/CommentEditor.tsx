@@ -13,7 +13,7 @@ import Placeholder from "@tiptap/extension-placeholder";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import { useEffect } from "react";
-
+import { type CommenEditor } from "@/features/dashboard/types";
 import {
   Bold,
   Italic,
@@ -26,10 +26,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-type Props = {
-  onContentChange: (content: string) => void;
-  commentHtml?: string;
-};
 
 const MenuBar = ({ editor }: { editor: any }) => {
   if (!editor) {
@@ -39,7 +35,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
   const addLink = () => {
     const selection = editor.view.state.selection;
     const selectedText = editor.view.state.doc.textBetween(selection.from, selection.to, '');
-    
+
     const previousUrl = editor.getAttributes("link").href;
     const url = window.prompt("Enter URL:", previousUrl || "");
 
@@ -76,7 +72,6 @@ const MenuBar = ({ editor }: { editor: any }) => {
 
   return (
     <div className="flex items-center gap-1 p-2 border-b bg-muted/50 flex-wrap">
-      {/* Text Formatting */}
       <div className="flex items-center gap-1">
         <Button
           type="button"
@@ -140,7 +135,6 @@ const MenuBar = ({ editor }: { editor: any }) => {
 
       <Separator orientation="vertical" className="h-6" />
 
-      {/* Media */}
       <div className="flex items-center gap-1">
         <Button
           type="button"
@@ -171,32 +165,26 @@ const MenuBar = ({ editor }: { editor: any }) => {
   );
 };
 
-export default function CommentEditor({ onContentChange, commentHtml }: Props) {
+export default function CommentEditor({ onContentChange, commentHtml }: CommenEditor) {
   const editor = useEditor({
     extensions: [
-      // StarterKit includes most basic functionality
       StarterKit.configure({
-        // Disable built-in extensions we want to configure separately
         heading: false,
         bulletList: false,
         orderedList: false,
         listItem: false,
       }),
-      
-      // Configure extensions separately for better control
+
       Document,
       Paragraph,
       Text,
-      
-      // Headings with proper configuration
       Heading.configure({
         levels: [1, 2, 3, 4, 5, 6],
         HTMLAttributes: {
           class: 'editor-heading',
         },
       }),
-      
-      // Lists with proper configuration
+
       BulletList.configure({
         itemTypeName: "listItem",
         keepMarks: true,
@@ -204,7 +192,7 @@ export default function CommentEditor({ onContentChange, commentHtml }: Props) {
           class: 'editor-bullet-list',
         },
       }),
-      
+
       OrderedList.configure({
         itemTypeName: "listItem",
         keepMarks: true,
@@ -212,14 +200,13 @@ export default function CommentEditor({ onContentChange, commentHtml }: Props) {
           class: 'editor-ordered-list',
         },
       }),
-      
+
       ListItem.configure({
         HTMLAttributes: {
           class: 'editor-list-item',
         },
       }),
 
-      // Link configuration
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
@@ -229,20 +216,17 @@ export default function CommentEditor({ onContentChange, commentHtml }: Props) {
         },
       }),
 
-      // Image configuration
       Image.configure({
         HTMLAttributes: {
           class: 'editor-image rounded-md max-w-full h-auto',
         },
       }),
 
-      // Text styling
       TextStyle,
-      Color.configure({ 
-        types: [TextStyle.name, ListItem.name] 
+      Color.configure({
+        types: [TextStyle.name, ListItem.name]
       }),
 
-      // Placeholder
       Placeholder.configure({
         placeholder: "What are your thoughts on...",
       }),

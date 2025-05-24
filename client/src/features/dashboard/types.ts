@@ -23,6 +23,14 @@ export type UploadPdfResponse = {
     }[];
 };
 
-
-
 export type ViewMode = "list" | "grid";
+
+export type InviteUser = {
+    pdfId: string;
+}
+
+
+export type CommenEditor = {
+    onContentChange: (content: string) => void;
+    commentHtml?: string;
+  };
