@@ -2,13 +2,14 @@ import { Request, Response } from 'express';
 import { prisma } from '@config/prismaClient';
 import crypto from 'crypto';
 import { generatePresignedUrl } from '@utils/s3.services';
+import { sendEmailToUser } from '@utils/mail.services';
 
 //single useer invite
 export const sharePdf = async (req: Request, res: Response): Promise<void> => {
     try {
         const userId = req.user?.userId;
         const pdfId = req.params.id;
-        const email = req.body.email;
+        const email = req.body.email as string;
 
         if (!userId) {
             res.status(401).json({ error: 'Unauthorized' });
@@ -73,6 +74,11 @@ export const sharePdf = async (req: Request, res: Response): Promise<void> => {
                 });
             }
         }
+
+        await sendEmailToUser({
+            to: email,
+            shareUrl
+        })
 
         res.status(201).json({
             message: 'User invited to this PDF',
