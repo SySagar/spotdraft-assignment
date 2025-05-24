@@ -233,7 +233,9 @@ export default function CommentEditor({ onContentChange, commentHtml }: CommenEd
     ],
     content: commentHtml || "",
     onUpdate: ({ editor }) => {
+      console.log('heh', editor.getHTML())
       onContentChange(editor.getHTML());
+
     },
   });
 
