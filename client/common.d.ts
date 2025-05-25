@@ -1,15 +1,15 @@
-import { type FormikTouched, type FormikErrors } from 'formik'
+import { type FormikTouched, type FormikErrors } from "formik";
 
 declare global {
-    type FieldErrorType = {
-        error: boolean | FormikErrors<any> | FormikErrors<any>[] | undefined;
-    }
+  type FieldErrorType = {
+    error: boolean | FormikErrors<any> | FormikErrors<any>[] | undefined;
+  };
 }
 
 declare global {
-    type FieldTouchType = {
-        touched: boolean | FormikTouched<any> | FormikTouched<any>[] | undefined;
-    }
+  type FieldTouchType = {
+    touched: boolean | FormikTouched<any> | FormikTouched<any>[] | undefined;
+  };
 }
 
-export { }; // Prevents file from being treated as a script
+export {}; // Prevents file from being treated as a script

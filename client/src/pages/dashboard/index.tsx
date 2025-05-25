@@ -1,11 +1,11 @@
-import PdfList from "./PDFList"
+import PdfList from "./PDFList";
 
 function Dashboard() {
-    return (
-        <div>
-            <PdfList />
-        </div>
-    )
+  return (
+    <div>
+      <PdfList />
+    </div>
+  );
 }
 
-export default Dashboard
+export default Dashboard;

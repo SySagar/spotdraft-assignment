@@ -1,12 +1,21 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Link, Outlet } from "react-router-dom"
-import { BarChart, FileText, Home, LayoutDashboard, LogOut, Menu, Settings, Upload, User } from "lucide-react"
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { AppSidebar } from "@/components/ui/app-sidebar"
+import { useState } from "react";
+import { Link, Outlet } from "react-router-dom";
+import {
+  BarChart,
+  FileText,
+  Home,
+  LayoutDashboard,
+  LogOut,
+  Menu,
+  Settings,
+  User,
+} from "lucide-react";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/ui/app-sidebar";
 
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -14,12 +23,12 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useUserStore } from "@/store/userStore"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+} from "@/components/ui/dropdown-menu";
+import { useUserStore } from "@/store/userStore";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function AppLayout() {
-  const [open, setOpen] = useState(false)
+  const [open, setOpen] = useState(false);
   const user = useUserStore((state) => state.user);
 
   return (
@@ -74,7 +83,9 @@ export default function AppLayout() {
                 </div>
                 <div className="grid gap-0.5">
                   <p className="text-sm font-medium">John Doe</p>
-                  <p className="text-xs text-muted-foreground">john@example.com</p>
+                  <p className="text-xs text-muted-foreground">
+                    john@example.com
+                  </p>
                 </div>
               </div>
             </div>
@@ -109,7 +120,10 @@ export default function AppLayout() {
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
-                <Link to="/login" className="flex cursor-pointer items-center text-destructive">
+                <Link
+                  to="/login"
+                  className="flex cursor-pointer items-center text-destructive"
+                >
                   <LogOut className="mr-2 h-4 w-4" />
                   Log out
                 </Link>
@@ -126,5 +140,5 @@ export default function AppLayout() {
         </main>
       </SidebarProvider>
     </div>
-  )
+  );
 }

@@ -11,13 +11,11 @@ const ProtectedRoute = () => {
     try {
       const res = await authAPI.verify();
       setIsVerified(true);
-      if (res)
-        setUser(res?.data)
+      if (res) setUser(res?.data);
     } catch {
       setIsVerified(false);
     }
-  }, [setIsVerified])
-
+  }, [setIsVerified, setUser]);
 
   useEffect(() => {
     const token = localStorage.getItem("accessToken");

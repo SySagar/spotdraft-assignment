@@ -26,7 +26,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 
-
 const MenuBar = ({ editor }: { editor: any }) => {
   if (!editor) {
     return null;
@@ -34,7 +33,11 @@ const MenuBar = ({ editor }: { editor: any }) => {
 
   const addLink = () => {
     const selection = editor.view.state.selection;
-    const selectedText = editor.view.state.doc.textBetween(selection.from, selection.to, '');
+    const selectedText = editor.view.state.doc.textBetween(
+      selection.from,
+      selection.to,
+      "",
+    );
 
     const previousUrl = editor.getAttributes("link").href;
     const url = window.prompt("Enter URL:", previousUrl || "");
@@ -46,25 +49,36 @@ const MenuBar = ({ editor }: { editor: any }) => {
       return;
     }
 
-    const finalUrl = url.startsWith('http://') || url.startsWith('https://')
-      ? url
-      : `https://${url}`;
+    const finalUrl =
+      url.startsWith("http://") || url.startsWith("https://")
+        ? url
+        : `https://${url}`;
 
     if (selectedText) {
       // If text is selected, make it a link
-      editor.chain().focus().extendMarkRange("link").setLink({ href: finalUrl }).run();
+      editor
+        .chain()
+        .focus()
+        .extendMarkRange("link")
+        .setLink({ href: finalUrl })
+        .run();
     } else {
       // If no text selected, insert the URL as both text and link
-      editor.chain().focus().insertContent(`<a href="${finalUrl}">${finalUrl}</a>`).run();
+      editor
+        .chain()
+        .focus()
+        .insertContent(`<a href="${finalUrl}">${finalUrl}</a>`)
+        .run();
     }
   };
 
   const addImage = () => {
     const url = window.prompt("Enter Image URL:", "");
     if (url) {
-      const finalUrl = url.startsWith('http://') || url.startsWith('https://')
-        ? url
-        : `https://${url}`;
+      const finalUrl =
+        url.startsWith("http://") || url.startsWith("https://")
+          ? url
+          : `https://${url}`;
 
       editor.chain().focus().setImage({ src: finalUrl }).run();
     }
@@ -102,8 +116,12 @@ const MenuBar = ({ editor }: { editor: any }) => {
             key={level}
             type="button"
             size="sm"
-            variant={editor.isActive("heading", { level }) ? "default" : "ghost"}
-            onClick={() => editor.chain().focus().toggleHeading({ level }).run()}
+            variant={
+              editor.isActive("heading", { level }) ? "default" : "ghost"
+            }
+            onClick={() =>
+              editor.chain().focus().toggleHeading({ level }).run()
+            }
             className="min-w-[32px]"
           >
             H{level}
@@ -152,12 +170,7 @@ const MenuBar = ({ editor }: { editor: any }) => {
         >
           <LinkIcon className="h-4 w-4" />
         </Button>
-        <Button
-          type="button"
-          size="sm"
-          variant="ghost"
-          onClick={addImage}
-        >
+        <Button type="button" size="sm" variant="ghost" onClick={addImage}>
           <ImageIcon className="h-4 w-4" />
         </Button>
       </div>
@@ -165,7 +178,10 @@ const MenuBar = ({ editor }: { editor: any }) => {
   );
 };
 
-export default function CommentEditor({ onContentChange, commentHtml }: CommenEditor) {
+export default function CommentEditor({
+  onContentChange,
+  commentHtml,
+}: CommenEditor) {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -181,7 +197,7 @@ export default function CommentEditor({ onContentChange, commentHtml }: CommenEd
       Heading.configure({
         levels: [1, 2, 3, 4, 5, 6],
         HTMLAttributes: {
-          class: 'editor-heading',
+          class: "editor-heading",
         },
       }),
 
@@ -189,7 +205,7 @@ export default function CommentEditor({ onContentChange, commentHtml }: CommenEd
         itemTypeName: "listItem",
         keepMarks: true,
         HTMLAttributes: {
-          class: 'editor-bullet-list',
+          class: "editor-bullet-list",
         },
       }),
 
@@ -197,34 +213,34 @@ export default function CommentEditor({ onContentChange, commentHtml }: CommenEd
         itemTypeName: "listItem",
         keepMarks: true,
         HTMLAttributes: {
-          class: 'editor-ordered-list',
+          class: "editor-ordered-list",
         },
       }),
 
       ListItem.configure({
         HTMLAttributes: {
-          class: 'editor-list-item',
+          class: "editor-list-item",
         },
       }),
 
       Link.configure({
         openOnClick: false,
         HTMLAttributes: {
-          class: 'text-blue-600 hover:text-blue-800 underline cursor-pointer',
-          rel: 'noopener noreferrer',
-          target: '_blank',
+          class: "text-blue-600 hover:text-blue-800 underline cursor-pointer",
+          rel: "noopener noreferrer",
+          target: "_blank",
         },
       }),
 
       Image.configure({
         HTMLAttributes: {
-          class: 'editor-image rounded-md max-w-full h-auto',
+          class: "editor-image rounded-md max-w-full h-auto",
         },
       }),
 
       TextStyle,
       Color.configure({
-        types: [TextStyle.name, ListItem.name]
+        types: [TextStyle.name, ListItem.name],
       }),
 
       Placeholder.configure({
@@ -233,9 +249,8 @@ export default function CommentEditor({ onContentChange, commentHtml }: CommenEd
     ],
     content: commentHtml || "",
     onUpdate: ({ editor }) => {
-      console.log('heh', editor.getHTML())
+      console.log("heh", editor.getHTML());
       onContentChange(editor.getHTML());
-
     },
   });
 

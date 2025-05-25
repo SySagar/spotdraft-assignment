@@ -47,7 +47,7 @@ body {
 
 :root {
   --radius: 0.625rem;
-  
+
   /* Light theme - Purple/Indigo palette */
   --background: oklch(0.99 0.005 264);
   --foreground: oklch(0.15 0.02 264);
@@ -55,38 +55,38 @@ body {
   --card-foreground: oklch(0.15 0.02 264);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.15 0.02 264);
-  
+
   /* Primary - Deep Indigo/Purple (#6366f1 equivalent) */
   --primary: oklch(0.55 0.18 264);
   --primary-foreground: oklch(0.99 0.005 264);
-  
+
   /* Secondary - Light purple */
   --secondary: oklch(0.96 0.02 264);
   --secondary-foreground: oklch(0.25 0.05 264);
-  
+
   /* Muted - Very light purple */
   --muted: oklch(0.97 0.01 264);
   --muted-foreground: oklch(0.45 0.03 264);
-  
+
   /* Accent - Medium purple */
   --accent: oklch(0.94 0.03 264);
   --accent-foreground: oklch(0.25 0.05 264);
-  
+
   /* Destructive - Red for errors */
   --destructive: oklch(0.577 0.245 27.325);
-  
+
   /* Borders and inputs - Light purple tint */
   --border: oklch(0.9 0.01 264);
   --input: oklch(0.9 0.01 264);
   --ring: oklch(0.55 0.18 264);
-  
+
   /* Charts - Purple variations */
   --chart-1: oklch(0.55 0.18 264);
   --chart-2: oklch(0.65 0.15 280);
   --chart-3: oklch(0.45 0.12 250);
-  --chart-4: oklch(0.75 0.10 290);
+  --chart-4: oklch(0.75 0.1 290);
   --chart-5: oklch(0.35 0.15 240);
-  
+
   /* Sidebar - Matching the login page sidebar */
   --sidebar: oklch(0.99 0.005 264);
   --sidebar-foreground: oklch(0.15 0.02 264);
@@ -106,38 +106,38 @@ body {
   --card-foreground: oklch(0.95 0.01 264);
   --popover: oklch(0.12 0.02 264);
   --popover-foreground: oklch(0.95 0.01 264);
-  
+
   /* Primary - Lighter purple for dark mode */
   --primary: oklch(0.75 0.15 264);
   --primary-foreground: oklch(0.08 0.02 264);
-  
+
   /* Secondary - Dark purple */
   --secondary: oklch(0.18 0.03 264);
   --secondary-foreground: oklch(0.95 0.01 264);
-  
+
   /* Muted - Medium dark purple */
   --muted: oklch(0.15 0.02 264);
   --muted-foreground: oklch(0.65 0.02 264);
-  
+
   /* Accent - Medium purple for dark mode */
   --accent: oklch(0.22 0.04 264);
   --accent-foreground: oklch(0.95 0.01 264);
-  
+
   /* Destructive - Lighter red for dark mode */
   --destructive: oklch(0.704 0.191 22.216);
-  
+
   /* Borders and inputs - Dark purple with transparency */
   --border: oklch(0.3 0.03 264 / 20%);
   --input: oklch(0.3 0.03 264 / 25%);
   --ring: oklch(0.75 0.15 264);
-  
+
   /* Charts - Purple variations for dark mode */
   --chart-1: oklch(0.75 0.15 264);
   --chart-2: oklch(0.65 0.12 280);
-  --chart-3: oklch(0.55 0.10 250);
+  --chart-3: oklch(0.55 0.1 250);
   --chart-4: oklch(0.85 0.08 290);
   --chart-5: oklch(0.45 0.12 240);
-  
+
   /* Sidebar - Dark purple theme */
   --sidebar: oklch(0.12 0.02 264);
   --sidebar-foreground: oklch(0.95 0.01 264);
