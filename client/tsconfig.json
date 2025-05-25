@@ -4,7 +4,7 @@
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
   ],
-  "include": ["client/common.d.ts", "src"],
+  "include": ["client/common.d.ts", "src","fontsource.d.ts"],
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
