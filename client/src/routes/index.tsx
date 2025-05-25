@@ -7,6 +7,7 @@ import UsersPage from "@/pages/users";
 import SharePdfPage from "@/pages/share/[token]";
 import NotFound from "@/pages/NotFound";
 import Unauthorized from "@/pages/Unathorized";
+import { Navigate } from "react-router-dom";
 import ProtectedRoute from "@/common/ProtectedRoute";
 
 const router = createBrowserRouter([
@@ -17,6 +18,7 @@ const router = createBrowserRouter([
       {
         element: <AppLayout />,
         children: [
+          { index: true, element: <Navigate to="/dashboard" replace /> },
           { path: "dashboard", element: <Dashboard /> },
           { path: "users", element: <UsersPage /> },
         ],
