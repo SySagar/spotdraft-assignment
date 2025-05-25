@@ -6,9 +6,7 @@ import {
   MoreHorizontal,
   Search,
   Upload,
-  Eye,
   Download,
-  Share2,
   Trash2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
