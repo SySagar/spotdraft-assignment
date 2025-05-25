@@ -1,0 +1,423 @@
+{
+	"info": {
+		"_postman_id": "5894f2b4-00af-4bc5-ba36-9c5b9faaf886",
+		"name": "spotdraft",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22903180"
+	},
+	"item": [
+		{
+			"name": "login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"email\": \"soumyasagar135@gmail.com\",\r\n  \"password\": \"sy_sagar123\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:5000/test",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/test",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"test"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"name\": \"Soumya\",\r\n  \"email\": \"soumyasagar135@gmail.com\",\r\n  \"password\": \"sy_sagar123\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/auth/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "uploadPdf",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWF5N29nNTkwMDAxdWRmNG1lZWE3dXNzIiwiaWF0IjoxNzQ4MDAwNTY5LCJleHAiOjE3NDg2MDUzNjl9.d_1EbV_mtv2HJIrHruMkmQ4VCVUgTSTJpXeIknK8Lug",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "files",
+							"type": "file",
+							"src": "/C:/Users/hp/Downloads/receipt.pdf"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:5000/pdf/upload",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"pdf",
+						"upload"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getSinglePDF",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOgggUzI1giIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWF5N29nNTkwMDAxdWRmNG1lZWE3dXNzIiwiaWF0IjoxNzQ3OTQ2MjIyLCJleHAiOjE3NDg1NTEwMjJ9.0V_N7_-zSDVO3Sar3QGb-BYuNMzLAfUhlOTu7rD6tmg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/pdf/searchPdf?search=coursera_result_sem.pdf",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"pdf",
+						"searchPdf"
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": "coursera_result_sem.pdf"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "singlePDFEntity",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWF2bmE3eWEwMDAwdWRnNG50ZHNkMW9mIiwiaWF0IjoxNzQ3NzcxMzUxLCJleHAiOjE3NDgzNzYxNTF9.yWoQBseHJWk9QeBE4wvbV6KkR1q8BftXRPnQeGAWnQM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/pdf/cmawyse0n0001udc04h0i9jd3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"pdf",
+						"cmawyse0n0001udc04h0i9jd3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getComment",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWF2bmE3eWEwMDAwdWRnNG50ZHNkMW9mIiwiaWF0IjoxNzQ3NzcxMzUxLCJleHAiOjE3NDgzNzYxNTF9.yWoQBseHJWk9QeBE4wvbV6KkR1q8BftXRPnQeGAWnQM",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/pdf/comment/cmb171v8u0005udpk2fl8hyno",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"pdf",
+						"comment",
+						"cmb171v8u0005udpk2fl8hyno"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "share",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWF2bmE3eWEwMDAwdWRnNG50ZHNkMW9mIiwiaWF0IjoxNzQ3OTI3NzI1LCJleHAiOjE3NDg1MzI1MjV9.I_AZXBgeaDkKZ1nxbpyNtbDLGyHeu_t0SAz1T8YHim0",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/pdf/cmawyse0n0001udc04h0i9jd3/share",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"pdf",
+						"cmawyse0n0001udc04h0i9jd3",
+						"share"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "shareAccess",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWF5N29nNTkwMDAxdWRmNG1lZWE3dXNzIiwiaWF0IjoxNzQ3OTI3ODcyLCJleHAiOjE3NDg1MzI2NzJ9.PGN2GJvv-GkwyX5H9e43p8ddCuvOU7YD23lVThdK3xg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/share/9adaafa283c1fa15844c51378d26f3af",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"share",
+						"9adaafa283c1fa15844c51378d26f3af"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getALlPdfs",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWF5N29nNTkwMDAxdWRmNG1lZWE3dXNzIiwiaWF0IjoxNzQ4MDAyMTY0LCJleHAiOjE3NDg2MDY5NjR9.aa5Ph787PDlJ-SrlSh-lV-0Dz9VZx63RLX2hgFT5fLQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/pdf/getAllPDFs",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"pdf",
+						"getAllPDFs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "presignedUrl",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWF5N29nNTkwMDAxdWRmNG1lZWE3dXNzIiwiaWF0IjoxNzQ4MDAyMTY0LCJleHAiOjE3NDg2MDY5NjR9.aa5Ph787PDlJ-SrlSh-lV-0Dz9VZx63RLX2hgFT5fLQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": \"cmb0y1tzk0005udfkd611efdw\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/pdf/presignedUrl",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"pdf",
+						"presignedUrl"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "users",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWF5N29nNTkwMDAxdWRmNG1lZWE3dXNzIiwiaWF0IjoxNzQ4MDAyMTY0LCJleHAiOjE3NDg2MDY5NjR9.aa5Ph787PDlJ-SrlSh-lV-0Dz9VZx63RLX2hgFT5fLQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:5000/users",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "addComment",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjbWF5N29nNTkwMDAxdWRmNG1lZWE3dXNzIiwiaWF0IjoxNzQ4MDAyMTY0LCJleHAiOjE3NDg2MDY5NjR9.aa5Ph787PDlJ-SrlSh-lV-0Dz9VZx63RLX2hgFT5fLQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"content\": {\r\n    \"type\": \"doc\",\r\n    \"content\": [\r\n      { \"type\": \"paragraph\", \"content\": [{ \"type\": \"text\", \"text\": \"Hi 👋\" }] }\r\n    ]\r\n  }\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:5000/pdf/comment/cmb171v8u0005udpk2fl8hyno",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "5000",
+					"path": [
+						"pdf",
+						"comment",
+						"cmb171v8u0005udpk2fl8hyno"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
