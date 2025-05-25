@@ -25,6 +25,7 @@ app.use(
 
 const allowedOrigins = [
     "http://localhost:5173",
+    "https://spotdraft-assignment-eight.vercel.app"
 ];
 
 app.use(cors({
