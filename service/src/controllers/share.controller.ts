@@ -36,7 +36,7 @@ export const sharePdf = async (req: Request, res: Response): Promise<void> => {
         });
 
         if (existing) {
-            const shareUrl = `${process.env.BASE_URL ?? 'http://localhost:5173'}/share/${existing.token}`;
+            const shareUrl = `${process.env.HOST_URL ?? 'http://localhost:5173'}/share/${existing.token}`;
             res.status(200).json({
                 message: 'PDF already shared',
                 shareUrl,
@@ -55,7 +55,7 @@ export const sharePdf = async (req: Request, res: Response): Promise<void> => {
             }
         });
 
-        const shareUrl = `${process.env.BASE_URL ?? 'http://localhost:5173'}/share/${token}`;
+        const shareUrl = `${process.env.HOST_URL ?? 'http://localhost:5173'}/share/${token}`;
 
         const invitedUser = await prisma.user.findUnique({
             where: { email }
