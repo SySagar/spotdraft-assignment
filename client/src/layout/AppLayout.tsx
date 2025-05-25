@@ -1,15 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import {
-  BarChart,
   FileText,
   Home,
   LayoutDashboard,
   LogOut,
   Menu,
-  Settings,
   User,
 } from "lucide-react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
@@ -25,11 +23,22 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useUserStore } from "@/store/userStore";
+import { useNavigate } from "react-router-dom";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 export default function AppLayout() {
   const [open, setOpen] = useState(false);
   const user = useUserStore((state) => state.user);
+  const clearUser = useUserStore((state) => state.clearUser);
+  const navigate = useNavigate();
+
+  const handleLogout = useCallback(() => {
+    clearUser();
+    localStorage.removeItem("user");
+    localStorage.removeItem("user-storage");
+    localStorage.removeItem("accessToken");
+    navigate("/login");
+  }, [clearUser, navigate])
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -44,15 +53,7 @@ export default function AppLayout() {
           <SheetContent side="left" className="flex flex-col">
             <nav className="grid gap-2 text-lg font-medium">
               <Link
-                to="/"
-                className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:text-primary"
-                onClick={() => setOpen(false)}
-              >
-                <Home className="h-5 w-5" />
-                Home
-              </Link>
-              <Link
-                to="/"
+                to="/dashboard"
                 className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:text-primary"
                 onClick={() => setOpen(false)}
               >
@@ -60,20 +61,12 @@ export default function AppLayout() {
                 Dashboard
               </Link>
               <Link
-                to="/"
+                to="/users"
                 className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:text-primary"
                 onClick={() => setOpen(false)}
               >
-                <FileText className="h-5 w-5" />
-                Documents
-              </Link>
-              <Link
-                to="/"
-                className="flex items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:text-primary"
-                onClick={() => setOpen(false)}
-              >
-                <BarChart className="h-5 w-5" />
-                Analytics
+                <Home className="h-5 w-5" />
+                Users
               </Link>
             </nav>
             <div className="mt-auto">
@@ -82,9 +75,9 @@ export default function AppLayout() {
                   <User className="h-6 w-6 text-primary" />
                 </div>
                 <div className="grid gap-0.5">
-                  <p className="text-sm font-medium">John Doe</p>
+                  <p className="text-sm font-medium">{user?.name}</p>
                   <p className="text-xs text-muted-foreground">
-                    john@example.com
+                    {user?.email}
                   </p>
                 </div>
               </div>
@@ -112,16 +105,11 @@ export default function AppLayout() {
                   Profile
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="/" className="flex cursor-pointer items-center">
-                  <Settings className="mr-2 h-4 w-4" />
-                  Settings
-                </Link>
-              </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link
                   to="/login"
+                  onClick={handleLogout}
                   className="flex cursor-pointer items-center text-destructive"
                 >
                   <LogOut className="mr-2 h-4 w-4" />
@@ -139,6 +127,6 @@ export default function AppLayout() {
           <Outlet />
         </main>
       </SidebarProvider>
-    </div>
+    </div >
   );
 }
