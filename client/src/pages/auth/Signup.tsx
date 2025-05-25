@@ -136,7 +136,6 @@ export default function Signup() {
   const navigate = useNavigate();
 
   const handleRedirectToLogin = useCallback(() => {
-    console.log("hehe navigatin");
     navigate("/login");
   }, [navigate]);
 

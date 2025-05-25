@@ -41,8 +41,9 @@ export const useDeletePdfMutation = () => {
       toast.success("PDF deleted");
       queryClient.invalidateQueries({ queryKey: ["pdfs"] });
     },
-    onError: () => {
-      toast.error("Failed to delete PDF");
+    onError: (err: any) => {
+      console.log("Error deleting PDF:", err);
+      toast.error(err?.response?.data?.error || "Failed to delete PDF");
     },
   });
 };
