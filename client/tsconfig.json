@@ -4,9 +4,10 @@
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
   ],
-  "include": ["client/common.d.ts", "src","fontsource.d.ts"],
+  "include": [],
   "compilerOptions": {
     "composite": true,
+    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
