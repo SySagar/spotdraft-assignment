@@ -343,9 +343,9 @@ export default function Signup() {
           </p>
         </div>
 
-        <div className="absolute bottom-8 text-center text-xs text-muted-foreground">
+        {/* <div className="absolute bottom-8 text-center text-xs text-muted-foreground">
           ©2025 PDF Collab. All rights reserved.
-        </div>
+        </div> */}
       </div>
 
       <div className="hidden bg-indigo-600 md:block md:w-1/2">

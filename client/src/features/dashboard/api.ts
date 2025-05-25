@@ -33,4 +33,8 @@ export const pdfAPI = {
       (res) => res.data,
     );
   },
+
+  deletePdf: async (pdfId: string) => {
+    return AuthorizedAPIInstance.post(`/pdf/deletePdf/${pdfId}`).then(res => res.data);
+  },
 };

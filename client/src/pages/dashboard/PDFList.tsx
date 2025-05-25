@@ -29,18 +29,46 @@ import {
 import { formatDate } from "@/lib/utils";
 import PdfModal from "./PdfViewer";
 // import PdfIframe from "./PdfViewer.v2"
+import { pdfAPI } from "@/features/dashboard/api";
 import { type PdfFile, type ViewMode } from "@/features/dashboard/types";
 
-import { useUploadPdfMutation } from "@/features/dashboard/mutations";
+import { useUploadPdfMutation, useDeletePdfMutation } from "@/features/dashboard/mutations";
 import { useDebounce } from "@/hooks/useDebounce";
 
 function PDFListView({
   files,
   handleSelectPdf,
+  deletePdf
 }: {
   files: PdfFile[];
   handleSelectPdf: any;
+  deletePdf: any;
 }) {
+
+  const handleDownloadPdf = async (pdfId: string, filename: string) => {
+    try {
+      const { url } = await pdfAPI.getPresignedUrl(pdfId); // this gives you a direct S3 URL
+
+      // Fetch as Blob
+      const response = await fetch(url);
+      const blob = await response.blob();
+
+      // Create blob URL and trigger download
+      const blobUrl = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = filename.endsWith(".pdf") ? filename : `${filename}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(blobUrl); // cleanup
+    } catch (err) {
+      console.error("Download failed", err);
+    }
+  };
+
+
+
   return (
     <div className="space-y-2">
       {files.map((file) => (
@@ -75,19 +103,19 @@ function PDFListView({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
-                <DropdownMenuItem>
-                  <Eye className="mr-2 h-4 w-4" />
-                  View
-                </DropdownMenuItem>
-                <DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => handleDownloadPdf(String(file.id), file.title)}
+                >
                   <Download className="mr-2 h-4 w-4" />
                   Download
                 </DropdownMenuItem>
-                <DropdownMenuItem>
+                {/* <DropdownMenuItem>
                   <Share2 className="mr-2 h-4 w-4" />
                   Share
-                </DropdownMenuItem>
-                <DropdownMenuItem className="text-destructive">
+                </DropdownMenuItem> */}
+                <DropdownMenuItem className="text-destructive"
+                  onClick={() => deletePdf(file.id)}
+                >
                   <Trash2 className="mr-2 h-4 w-4" />
                   Delete
                 </DropdownMenuItem>
@@ -103,9 +131,11 @@ function PDFListView({
 function PDFGridView({
   files,
   handleSelectPdf,
+  deletePdf
 }: {
   files: PdfFile[];
   handleSelectPdf: any;
+  deletePdf: any;
 }) {
   return (
     <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
@@ -143,18 +173,16 @@ function PDFGridView({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem>
-                    <Eye className="mr-2 h-4 w-4" />
-                    View
-                  </DropdownMenuItem>
-                  <DropdownMenuItem>
                     <Download className="mr-2 h-4 w-4" />
                     Download
                   </DropdownMenuItem>
-                  <DropdownMenuItem>
+                  {/* <DropdownMenuItem>
                     <Share2 className="mr-2 h-4 w-4" />
                     Share
-                  </DropdownMenuItem>
-                  <DropdownMenuItem className="text-destructive">
+                  </DropdownMenuItem> */}
+                  <DropdownMenuItem
+                    onClick={() => deletePdf(file.id)}
+                    className="text-destructive">
                     <Trash2 className="mr-2 h-4 w-4" />
                     Delete
                   </DropdownMenuItem>
@@ -181,6 +209,7 @@ export default function Dashboard() {
     modalOpen,
   );
   const { data: allPdfData, isLoading, isError } = usePdfListQuery();
+  const { mutate: deletePdf } = useDeletePdfMutation();
   const { isPending } = useUploadPdfMutation();
 
   // const handleUploadClick = useCallback(() => {
@@ -312,11 +341,13 @@ export default function Dashboard() {
             <PDFListView
               files={filteredPdfs}
               handleSelectPdf={handleSelectPdf}
+              deletePdf={deletePdf}
             />
           ) : (
             <PDFGridView
               files={filteredPdfs}
               handleSelectPdf={handleSelectPdf}
+              deletePdf={deletePdf}
             />
           )}
         </div>

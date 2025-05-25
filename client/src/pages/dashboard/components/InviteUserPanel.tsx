@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -18,27 +18,33 @@ import { type InviteUser } from "@/features/dashboard/types";
 export default function InviteUserDialog({ pdfId }: InviteUser) {
   const [email, setEmail] = useState("");
   const [shareUrl, setShareUrl] = useState<string | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleSucess = (res: any) => {
-    {
-      console.log(res);
-      if (res) {
-        const token = res?.data?.token;
-        if (token) {
-          const link = `${window.location.origin}/share/${token}`;
-          setShareUrl(link);
-        }
-        setEmail("");
+
+    console.log(res);
+    if (res) {
+      const token = res?.data?.token;
+      if (token) {
+        const link = `${window.location.origin}/share/${token}`;
+        setShareUrl(link);
       }
+      setEmail("");
     }
   };
+
+  const handleFailure = useCallback((errorRes: any) => {
+    setErrorMessage(errorRes?.response?.data?.error || "Failed to invite user");
+    setShareUrl(null);
+  }
+    , []);
 
   const {
     mutate: inviteUser,
     isPending,
     isSuccess,
     isError,
-  } = useInviteUserMutation(pdfId, handleSucess);
+  } = useInviteUserMutation(pdfId, handleSucess, handleFailure);
 
   const handleInvite = () => {
     if (email.trim()) {
@@ -76,7 +82,7 @@ export default function InviteUserDialog({ pdfId }: InviteUser) {
         {isSuccess && (
           <p className="text-xs text-green-600 mt-2">User invited!</p>
         )}
-        {isError && <p className="text-xs text-red-500 mt-2">Invite failed.</p>}
+        {isError && <p className="text-xs text-red-500 mt-2">{errorMessage}</p>}
 
         {shareUrl && (
           <div className="mt-4 space-y-2">

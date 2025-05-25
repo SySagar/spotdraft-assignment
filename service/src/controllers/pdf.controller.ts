@@ -170,3 +170,38 @@ export const getPresignedPdfUrl = async (req: Request, res: Response) => {
         res.status(500).json({ error: "Internal error generating URL" });
     }
 };
+
+export const deletePdf = async (req: Request, res: Response) => {
+    try {
+        const pdfId = req.params.id;
+        const userId = req.user?.userId;
+
+        if (!userId) {
+            res.status(401).json({ error: 'Unauthorized' });
+            return;
+        }
+
+        const pdf = await prisma.pdf.findUnique({
+            where: { id: pdfId }
+        });
+
+        if (!pdf) {
+            res.status(404).json({ error: 'PDF not found' });
+            return;
+        }
+
+        if (pdf.ownerId !== userId) {
+            res.status(403).json({ error: 'You are not authorized to delete this PDF' });
+            return;
+        }
+
+        await prisma.pdf.delete({
+            where: { id: pdfId }
+        });
+
+        res.status(200).json({ message: 'PDF deleted successfully' });
+    } catch (error) {
+        logger.error('Error deleting PDF:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}

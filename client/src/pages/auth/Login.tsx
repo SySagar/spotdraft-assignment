@@ -197,7 +197,7 @@ export default function Login() {
             </Button>
           </div>
 
-          <div className="relative my-10">
+          <div className="relative my-0 2xl:my-10">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t"></div>
             </div>
@@ -208,7 +208,7 @@ export default function Login() {
             </div>
           </div>
 
-          <form className="space-y-6" onSubmit={loginForm.handleSubmit}>
+          <form className="space-y-3 xl:space-y-6" onSubmit={loginForm.handleSubmit}>
             <div className="space-y-2">
               <Label htmlFor="email">Email*</Label>
               <Input
@@ -281,9 +281,9 @@ export default function Login() {
           </p>
         </div>
 
-        <div className="text-center text-xs text-muted-foreground absolute bottom-8">
+        {/* <div className="text-center text-xs text-muted-foreground absolute bottom-2">
           ©2025 PDF Collab. All rights reserved.
-        </div>
+        </div> */}
       </div>
 
       <div className="hidden bg-indigo-600 md:block md:w-1/2">
