@@ -133,3 +133,8 @@ Authorization: Bearer <token>
 9. **Multiple invites sent**: Avoid spam, optionally add cooldown
 10. **Email invite delivery failure**: Log & handle via async mail job via resend
 11. **Comment editor cleared on Submit**: Ensure no loss of input during async operation
+
+## Future solutions:
+1. Cron job to schedule cleanup of invalid or expired link
+2. Role based access request for PDFS
+3. Edit user lie remove or edit
