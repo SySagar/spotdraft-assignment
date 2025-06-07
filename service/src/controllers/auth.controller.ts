@@ -3,7 +3,6 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { logger } from "@config/logger";
-import { tokenVerify } from "@utils/tokenVerify";
 
 const JWT_SECRET = process.env.JWT_SECRET ?? 'default_secret';
 
@@ -27,6 +26,7 @@ export const login = async (req: Request, res: Response) => {
 
 
     const user = await prisma.user.findUnique({ where: { email } });
+    console.log('Login attempt for:', email, password, user);
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
         res.status(401).json({ error: 'Invalid credentials' });
     }

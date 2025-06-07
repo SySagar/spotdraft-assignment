@@ -270,6 +270,8 @@ export default function Dashboard() {
     return allPdfData?.pdfs ?? [];
   }, [debouncedSearch, allPdfData]);
 
+  console.log("Filtered PDFs:", filteredPdfs);
+
   const buttonState = useMemo(() => {
     return isPending ? "Uploading..." : "Upload PDF";
   }, [isPending]);

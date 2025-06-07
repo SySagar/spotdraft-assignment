@@ -256,12 +256,12 @@ export default function Login() {
               <p className="text-xs text-muted-foreground">Min. 8 character</p>
             </div>
 
-            <div className="flex items-center space-x-2">
+            {/* <div className="flex items-center space-x-2">
               <Checkbox id="remember" />
               <Label htmlFor="remember" className="text-sm font-normal">
                 Remember me
               </Label>
-            </div>
+            </div> */}
 
             <Button
               type="submit"

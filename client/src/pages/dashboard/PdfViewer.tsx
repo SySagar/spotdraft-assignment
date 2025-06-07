@@ -39,6 +39,7 @@ export default function PdfModal({
     selectedPdfId,
     modalOpen,
   );
+  console.log(comments)
   const { mutate: addComment } = useAddCommentMutation(selectedPdfId);
 
   const renderPage = (page: any) => {
@@ -167,7 +168,7 @@ export default function PdfModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/60"
-      onClick={onClose}
+      onClick={allowCommenting ? onClose : (e) => e.stopPropagation()}
     >
       <div
         className="flex h-[90%] w-[90%] max-w-7xl rounded-lg bg-white shadow-lg overflow-hidden"
@@ -292,11 +293,10 @@ export default function PdfModal({
                       <button
                         key={page}
                         onClick={() => setPageNumber(page)}
-                        className={`w-8 h-8 text-xs rounded ${
-                          page === pageNumber
-                            ? "bg-blue-500 text-white"
-                            : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                        }`}
+                        className={`w-8 h-8 text-xs rounded ${page === pageNumber
+                          ? "bg-blue-500 text-white"
+                          : "bg-gray-100 hover:bg-gray-200 text-gray-700"
+                          }`}
                       >
                         {page}
                       </button>
@@ -336,15 +336,18 @@ export default function PdfModal({
         <div className="w-1/3 p-6 flex flex-col bg-white">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold text-gray-900">Comments</h2>
-            <div className="flex justify-content items-center">
-              <InviteUserPanel pdfId={selectedPdfId} />
-              <button
-                onClick={onClose}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                ✖
-              </button>
-            </div>
+            {
+              allowCommenting &&
+              <div className="flex justify-content items-center">
+                <InviteUserPanel pdfId={selectedPdfId} />
+                <button
+                  onClick={onClose}
+                  className="text-gray-400 hover:text-gray-600"
+                >
+                  ✖
+                </button>
+              </div>
+            }
           </div>
 
           <div className="flex-1 space-y-3 overflow-auto pr-2 mb-4">
@@ -362,7 +365,13 @@ export default function PdfModal({
                     {new Date(comment.createdAt).toLocaleString()}
                   </div>
                   <div
-                    className="prose prose-sm"
+                    className="prose prose-base
+                    [&_.ProseMirror]:outline-none [&_.ProseMirror]:min-h-[180px] [&_.ProseMirror]:p-0
+                    [&_.editor-heading]:font-bold [&_h1]:text-2xl [&_h2]:text-xl [&_h3]:text-lg [&_h4]:text-base [&_h5]:text-sm
+                    [&_.editor-bullet-list]:list-disc [&_.editor-bullet-list]:ml-6
+                    [&_.editor-ordered-list]:list-decimal [&_.editor-ordered-list]:ml-6
+                    [&_.editor-list-item]:mb-1
+                    "
                     dangerouslySetInnerHTML={{ __html: comment.content }}
                   />
                 </div>
